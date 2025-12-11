@@ -91,7 +91,7 @@ ${methodTasks}
 
 4. Referensi Teori: Sebutkan 3-5 teori atau kerangka konseptual yang relevan sebagai landasan penelitian.
 
-CATATAN: Berikan output dalam format Markdown yang rapi. Gunakan **Bold** untuk poin kunci dan bullet lists untuk detail.`;
+CATATAN: Berikan output dalam kanvas yang rapi. Gunakan teks bold untuk poin kunci dan bullet lists untuk detail.`;
     } else {
         return `Act as an Academic Research Expert in ${finalField}.
 
@@ -119,6 +119,6 @@ ${methodTasks}
 
 4. Theoretical Framework: Mention 3-5 relevant theories or conceptual frameworks as the research foundation.
 
-NOTE: Provide the output in clean Markdown format. Use **Bold** for key points and bullet lists for details.`;
+NOTE: Provide the output in canvas. Use Bold text for key points and bullet lists for details.`;
     }
 }
