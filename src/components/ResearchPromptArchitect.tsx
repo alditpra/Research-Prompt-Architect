@@ -93,7 +93,7 @@ export default function ResearchPromptArchitect() {
                 secondary: 'Studi Pustaka (Sekunder)'
             },
             helpers: {
-                informant: 'Siapa narasumber utamanya? misal: Korban KDRT, CEO Startup, Tokoh Adat',
+                informant: 'Siapa narasumber utamanya? misal: Korban Banjir, Preman Pasar, Koruptor',
                 focus: 'Apa fenomena/pengalaman unik yang ingin digali?',
                 varX: 'Faktor yang mempengaruhi. Misal: Diskon, Beban Kerja, Kualitas Produk',
                 varY: 'Yang dipengaruhi. Misal: Keputusan Beli, Stres Kerja, Loyalitas',
@@ -136,7 +136,7 @@ export default function ResearchPromptArchitect() {
                 secondary: 'Literature Review (Secondary)'
             },
             helpers: {
-                informant: 'Who is the main source? e.g. DV Victims, Startup CEOs',
+                informant: 'Who is the main source? e.g. flood victims, market thugs, corruptors.',
                 focus: 'What unique phenomenon/experience to explore?',
                 varX: 'Influencing factor. e.g. Discount, Workload, Product Quality',
                 varY: 'The outcome. e.g. Purchase Decision, Job Stress, Loyalty',
