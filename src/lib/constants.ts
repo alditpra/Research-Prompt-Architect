@@ -31,11 +31,11 @@ export const METHOD_SPECIFIC_TASKS = {
     qualitative: {
         id: `1. Draft Pedoman Wawancara: Buatkan minimal 10 pertanyaan eksploratif yang mendalam untuk menggali pengalaman/perspektif informan.
 2. Grand Theory: Identifikasi dan jelaskan teori besar yang relevan sebagai landasan analisis.
-3. Teknik Analisis: Jelaskan metode analisis data yang akan digunakan (coding, thematic analysis, atau grounded theory).`,
+3. Teknik Analisis: Jelaskan saran metode analisis data atau algoritma yang akan digunakan.`,
 
         en: `1. Interview Guide Draft: Create at least 10 exploratory questions to deeply explore informant experiences/perspectives.
 2. Grand Theory: Identify and explain relevant grand theory as the analytical foundation.
-3. Analysis Technique: Explain the data analysis method to be used (coding, thematic analysis, or grounded theory).`
+3. Analysis Technique: Describe the suggested method or algorithm for analyzing the data.`
     },
 
     quantitative: {
