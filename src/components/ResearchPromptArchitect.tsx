@@ -113,7 +113,7 @@ export default function ResearchPromptArchitect() {
         },
         en: {
             title: 'Research Prompt Architect',
-            subtitle: 'Logic-based academic research prompt builder',
+            subtitle: 'Logic-based academic research prompt builder by alditpra',
             fieldLabel: 'Field of Study',
             customFieldLabel: 'Specify Field of Study',
             customFieldPlaceholder: 'Example: Anthropology, Theoretical Physics...',
