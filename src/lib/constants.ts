@@ -58,3 +58,24 @@ export const METHOD_SPECIFIC_TASKS = {
 3. Analysis Technique: Determine appropriate regression type (Panel Data, Multiple Regression, or Path Analysis) based on data structure.`
     }
 };
+
+export const SUB_METHODS = {
+    qualitative: {
+        id: ['Studi Kasus', 'Fenomenologi', 'Etnografi', 'Studi Pustaka (Systematic Review)'],
+        en: ['Case Study', 'Phenomenology', 'Ethnography', 'Literature Review']
+    },
+    quantitative: {
+        id: ['Korelasional', 'Komparatif', 'Eksperimen', 'Deskriptif'],
+        en: ['Correlational', 'Comparative', 'Experimental', 'Descriptive']
+    },
+    secondary: {
+        id: ['Regresi Data Panel', 'Time Series', 'Korelasional', 'Path Analysis'],
+        en: ['Panel Data Regression', 'Time Series', 'Correlational', 'Path Analysis']
+    }
+};
+
+export const ANALYSIS_TOOLS = {
+    qualitative: ['NVivo', 'Atlas.ti', 'Manual Coding', 'MAXQDA', 'Lainnya'],
+    quantitative: ['SPSS', 'SmartPLS (SEM)', 'R Studio', 'Python', 'Stata', 'Lainnya'],
+    secondary: ['EViews', 'Stata', 'SPSS', 'Python', 'R Studio', 'Lainnya']
+};

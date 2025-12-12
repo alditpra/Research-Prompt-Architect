@@ -4,18 +4,23 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Copy, CheckCircle, GraduationCap, Languages, FileText, Users, BookOpen } from 'lucide-react';
 import { AppState, FieldType, MethodType } from '@/types';
 import { generatePrompt } from '@/lib/logic';
+import { METHOD_LABELS, SUB_METHODS, ANALYSIS_TOOLS } from '@/lib/constants';
 
 const INITIAL_STATE: AppState = {
     language: 'id',
     field: '',
     customField: '',
     topic: '',
-    problem: '',
+    problem: { ideal: '', actual: '' },
+    outputMode: 'proposal',
     method: 'quantitative',
+    subMethod: '',
+    tool: '',
+    customTool: '',
     details: {
         qualitative: { informant: '', focus: '' },
-        quantitative: { varX: '', varY: '', population: '' },
-        secondary: { varX: '', varY: '', source: '', population: '' }
+        quantitative: { varX: '', varY: '', varZ: '', population: '' },
+        secondary: { varX: '', varY: '', varZ: '', source: '', population: '' }
     }
 };
 
@@ -75,8 +80,15 @@ export default function ResearchPromptArchitect() {
             customFieldLabel: 'Spesifikasikan Bidang Studi',
             customFieldPlaceholder: 'Contoh: Antropologi, Fisika Teoretis...',
             topicLabel: 'Topik Penelitian',
-            problemLabel: 'Masalah Utama / Research Gap (Opsional)',
-            problemPlaceholder: 'Kosongkan jika ingin AI yang mencarikan masalah untuk Anda...',
+            outputModeLabel: 'Tujuan Output',
+            outputModes: {
+                brainstorming: 'Cari Ide / Brainstorming',
+                proposal: 'Buat Proposal Lengkap'
+            },
+            problemLabel: 'Latar Belakang Masalah (Gap Analysis)',
+            problemIdealPlaceholder: 'Kondisi Ideal / Harapan (Das Sollen). Contoh: Target penjualan seharusnya naik 10%...',
+            problemActualPlaceholder: 'Kondisi Aktual / Fakta (Das Sein). Contoh: Realisasinya turun 5% selama 3 tahun...',
+            problemNote: 'Opsional. Isi keduanya untuk hasil analisis masalah yang tajam.',
             generateBtn: 'Rakit Prompt',
             regenerateBtn: 'Rakit Ulang',
             resetBtn: 'Reset Form',
@@ -118,8 +130,15 @@ export default function ResearchPromptArchitect() {
             customFieldLabel: 'Specify Field of Study',
             customFieldPlaceholder: 'Example: Anthropology, Theoretical Physics...',
             topicLabel: 'Research Topic',
-            problemLabel: 'Main Research Gap (Optional)',
-            problemPlaceholder: 'Leave empty if you want AI to suggest research gaps...',
+            outputModeLabel: 'Output Goal',
+            outputModes: {
+                brainstorming: 'Find Ideas / Brainstorming',
+                proposal: 'Create Full Proposal'
+            },
+            problemLabel: 'Background Problem (Gap Analysis)',
+            problemIdealPlaceholder: 'Ideal Condition (Expectation). e.g. Sales reflected 10% growth...',
+            problemActualPlaceholder: 'Actual Condition (Reality). e.g. Actual sales declined by 5%...',
+            problemNote: 'Optional. Fill both for sharp problem analysis.',
             generateBtn: 'Build Prompt',
             regenerateBtn: 'Regenerate',
             resetBtn: 'Reset Form',
@@ -164,14 +183,16 @@ export default function ResearchPromptArchitect() {
         if (state.field === 'Lainnya' && !state.customField) return false;
         if (!state.topic) return false;
 
+        if (state.tool === 'Lainnya' && !state.customTool) return false;
+
         if (state.method === 'qualitative') {
-            return !!(state.details.qualitative.informant && state.details.qualitative.focus);
+            return !!(state.details.qualitative.informant && state.details.qualitative.focus && state.subMethod && state.tool);
         }
         if (state.method === 'quantitative') {
-            return !!(state.details.quantitative.varX && state.details.quantitative.varY && state.details.quantitative.population);
+            return !!(state.details.quantitative.varX && state.details.quantitative.varY && state.details.quantitative.population && state.subMethod && state.tool);
         }
         if (state.method === 'secondary') {
-            return !!(state.details.secondary.source && state.details.secondary.population && state.details.secondary.varX && state.details.secondary.varY);
+            return !!(state.details.secondary.source && state.details.secondary.population && state.details.secondary.varX && state.details.secondary.varY && state.subMethod && state.tool);
         }
         return false;
     };
@@ -297,16 +318,51 @@ export default function ResearchPromptArchitect() {
                         />
                     </div>
 
-                    <div className="space-y-2">
+                    <div className="space-y-4">
+                        <label className="block text-sm font-medium text-gray-700">
+                            {t.outputModeLabel} <span className="text-red-500">*</span>
+                        </label>
+                        <div className="flex bg-gray-50 p-1 rounded-lg">
+                            <button
+                                onClick={() => updateState('outputMode', 'brainstorming')}
+                                className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-all ${state.outputMode === 'brainstorming'
+                                    ? 'bg-white text-indigo-600 shadow-sm ring-1 ring-black/5'
+                                    : 'text-gray-500 hover:text-gray-900'
+                                    }`}
+                            >
+                                ✨ {t.outputModes.brainstorming}
+                            </button>
+                            <button
+                                onClick={() => updateState('outputMode', 'proposal')}
+                                className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-all ${state.outputMode === 'proposal'
+                                    ? 'bg-white text-indigo-600 shadow-sm ring-1 ring-black/5'
+                                    : 'text-gray-500 hover:text-gray-900'
+                                    }`}
+                            >
+                                📄 {t.outputModes.proposal}
+                            </button>
+                        </div>
+                    </div>
+
+                    <div className="space-y-4">
                         <label className="block text-sm font-medium text-gray-700">
                             {t.problemLabel}
                         </label>
-                        <textarea
-                            value={state.problem}
-                            onChange={(e) => updateState('problem', e.target.value)}
-                            placeholder={t.problemPlaceholder}
-                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 min-h-[100px] text-gray-900"
-                        />
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <textarea
+                                value={state.problem.ideal}
+                                onChange={(e) => setState(prev => ({ ...prev, problem: { ...prev.problem, ideal: e.target.value } }))}
+                                placeholder={t.problemIdealPlaceholder}
+                                className="w-full px-4 py-2 border border-blue-200 bg-blue-50/30 rounded-lg focus:ring-2 focus:ring-indigo-500 min-h-[100px] text-gray-900 text-sm"
+                            />
+                            <textarea
+                                value={state.problem.actual}
+                                onChange={(e) => setState(prev => ({ ...prev, problem: { ...prev.problem, actual: e.target.value } }))}
+                                placeholder={t.problemActualPlaceholder}
+                                className="w-full px-4 py-2 border border-red-200 bg-red-50/30 rounded-lg focus:ring-2 focus:ring-indigo-500 min-h-[100px] text-gray-900 text-sm"
+                            />
+                        </div>
+                        <p className="text-xs text-gray-500">{t.problemNote}</p>
                     </div>
                 </section>
 
@@ -330,6 +386,55 @@ export default function ResearchPromptArchitect() {
                                 {tab.label}
                             </button>
                         ))}
+                    </div>
+
+                    {/* Sub-Method & Tool Selection */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 animate-in fade-in duration-300">
+                        <div className="space-y-2">
+                            <label className="block text-sm font-medium text-gray-700">
+                                {state.language === 'id' ? 'Desain Spesifik' : 'Specific Design'} <span className="text-red-500">*</span>
+                            </label>
+                            <select
+                                value={state.subMethod}
+                                onChange={(e) => updateState('subMethod', e.target.value)}
+                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white text-gray-900"
+                            >
+                                <option value="">{state.language === 'id' ? 'Pilih Desain...' : 'Select Design...'}</option>
+                                {SUB_METHODS[state.method][state.language].map((m: string) => (
+                                    <option key={m} value={m}>{m}</option>
+                                ))}
+                            </select>
+                        </div>
+                        <div className="space-y-2">
+                            <label className="block text-sm font-medium text-gray-700">
+                                {state.language === 'id' ? 'Alat Analisis' : 'Analysis Tool'} <span className="text-red-500">*</span>
+                            </label>
+                            <select
+                                value={state.tool}
+                                onChange={(e) => updateState('tool', e.target.value)}
+                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white text-gray-900"
+                            >
+                                <option value="">{state.language === 'id' ? 'Pilih Software...' : 'Select Software...'}</option>
+                                {ANALYSIS_TOOLS[state.method].map((t: string) => (
+                                    <option key={t} value={t}>{t}</option>
+                                ))}
+                            </select>
+                        </div>
+
+                        {state.tool === 'Lainnya' && (
+                            <div className="md:col-span-2 space-y-2 animate-in fade-in duration-300">
+                                <label className="block text-sm font-medium text-gray-700">
+                                    {state.language === 'id' ? 'Sebutkan Alat Analisis' : 'Specify Analysis Tool'} <span className="text-red-500">*</span>
+                                </label>
+                                <input
+                                    type="text"
+                                    value={state.customTool}
+                                    onChange={(e) => updateState('customTool', e.target.value)}
+                                    placeholder={state.language === 'id' ? 'Contoh: Knime, Orange, Tableau...' : 'e.g. Knime, Orange, Tableau...'}
+                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-gray-900"
+                                />
+                            </div>
+                        )}
                     </div>
 
                     <div className="grid gap-6 animate-in fade-in duration-300">
@@ -389,6 +494,18 @@ export default function ResearchPromptArchitect() {
                                         />
                                         <p className="text-xs text-gray-500 mt-1">{t.helpers.varY}</p>
                                     </div>
+                                    <div className="space-y-2 md:col-span-2">
+                                        <label className="block text-sm font-medium text-gray-700">
+                                            {state.language === 'id' ? 'Variabel Z (Moderasi/Intervening)' : 'Variable Z (Moderating/Intervening)'} <span className="text-gray-400 text-xs font-normal">(Optional)</span>
+                                        </label>
+                                        <input
+                                            type="text"
+                                            value={state.details.quantitative.varZ}
+                                            onChange={(e) => updateDetail('quantitative', 'varZ', e.target.value)}
+                                            placeholder={state.language === 'id' ? 'Misal: Kepuasan Kerja, Budaya Organisasi' : 'e.g. Job Satisfaction, Org Culture'}
+                                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-gray-900"
+                                        />
+                                    </div>
                                 </div>
                                 <div className="space-y-2">
                                     <label className="block text-sm font-medium text-gray-700">
@@ -430,6 +547,18 @@ export default function ResearchPromptArchitect() {
                                             value={state.details.secondary.varY}
                                             onChange={(e) => updateDetail('secondary', 'varY', e.target.value)}
                                             placeholder={state.language === 'id' ? "Misal: Hasil Panen Padi" : "e.g. Rice Yield"}
+                                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-gray-900"
+                                        />
+                                    </div>
+                                    <div className="space-y-2 md:col-span-2">
+                                        <label className="block text-sm font-medium text-gray-700">
+                                            {state.language === 'id' ? 'Variabel Z (Moderasi/Intervening)' : 'Variable Z (Moderating/Intervening)'} <span className="text-gray-400 text-xs font-normal">(Optional)</span>
+                                        </label>
+                                        <input
+                                            type="text"
+                                            value={state.details.secondary.varZ}
+                                            onChange={(e) => updateDetail('secondary', 'varZ', e.target.value)}
+                                            placeholder={state.language === 'id' ? 'Misal: Kebijakan Pemerintah, Teknologi' : 'e.g. Govt Policy, Technology'}
                                             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-gray-900"
                                         />
                                     </div>
