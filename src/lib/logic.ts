@@ -165,7 +165,7 @@ Berikan 5 OPSI IDE PENELITIAN yang potensial. Untuk setiap opsi, jelaskan:
 1. Judul: Yang menarik & akademis.
 2. Research Gap: Kenapa ini penting diteliti? (Hubungkan dengan gap Ideal vs Aktual jika ada).
 3. Kebaruan (Novelty): Apa bedanya dengan riset lain?
-4. Validasi Metode: Apakah metode ${fullMethodLabel} cocok untuk ide ini? Jelaskan singkat.
+4. Validasi Metode & Alat: Apakah metode ${fullMethodLabel} dan alat ${finalTool} cocok untuk ide ini?
 5. Tingkat Kesulitan & Risiko: Estimasi waktu dan potensi kendala data.
 
 Gaya Bahasa: Santai tapi berbobot, memotivasi, dan inspiratif.`;
@@ -188,7 +188,7 @@ Provide 5 POTENTIAL RESEARCH IDEAS. For each option, explain:
 1. Title: Engaging & academic.
 2. Research Gap: Why is this important? (Connect with Ideal vs Actual gap if provided).
 3. Novelty: What differentiates this from other research?
-4. Method Validation: Is ${fullMethodLabel} suitable for this idea? Briefly explain.
+4. Method & Tool Validation: Is ${fullMethodLabel} and tool ${finalTool} suitable for this idea?
 5. Difficulty & Risk: Time estimation and potential data hurdles.
 
 Tone: Casual but insightful, motivating, and inspiring.`;
@@ -221,6 +221,7 @@ Buatkan outline proposal penelitian (Bab 1-3) yang mencakup:
 
 0. CEK VALIDITAS DATA (PENTING):
    - Review "Table Structure Snippet" di atas. Apakah tipe data (Numerik/Kategorial) memadai untuk dianalisis menggunakan ${finalTool}?
+   - KOMPATIBILITAS ALAT (WAJIB): Pastikan semua algoritma/uji statistik yang disarankan BISA DIKERJAKAN di ${finalTool}. Jangan menyarankan fitur yang tidak ada di software tersebut.
    - Jika ada ketidakcocokan (misal: Regresi Linear pada data teks), berikan PERINGATAN KERAS di awal output.
 
 1. Judul Penelitian: Buatkan judul yang akademis, spesifik, dan menarik (maksimal 20 kata). Hindari judul klise.
@@ -266,6 +267,7 @@ Create a comprehensive research proposal outline (Chapters 1-3) including:
 
 0. DATA FEASIBILITY CHECK (CRITICAL):
    - Review the "Table Structure Snippet" above. Are the data types (Numeric/Categorical) suitable for analysis using ${finalTool}?
+   - TOOL COMPATIBILITY (MANDATORY): Ensure all suggested algorithms/statistical tests CAN BE EXECUTED in ${finalTool}. Do not suggest features unavailable in this software.
    - If there is a mismatch (e.g., Linear Regression on text data), provide a STRONG WARNING at the beginning.
 
 1. Research Title: Create an academic, specific, and engaging title (maximum 20 words). Avoid cliches.
