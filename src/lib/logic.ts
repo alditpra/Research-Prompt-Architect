@@ -19,8 +19,8 @@ export function formatDetailsForPrompt(method: string, details: AppState['detail
             en: { varX: 'Variable X (Independent)', varY: 'Variable Y (Dependent)', population: 'Target Respondents' }
         },
         secondary: {
-            id: { source: 'Sumber Data', year: 'Periode Waktu' },
-            en: { source: 'Data Source', year: 'Time Period' }
+            id: { varX: 'Variabel X (Independen)', varY: 'Variabel Y (Dependen)', source: 'Sumber Data', population: 'Periode & Populasi' },
+            en: { varX: 'Variable X (Independent)', varY: 'Variable Y (Dependent)', source: 'Data Source', population: 'Period & Population' }
         }
     };
 

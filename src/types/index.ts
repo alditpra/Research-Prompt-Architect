@@ -8,7 +8,7 @@ export interface AppState {
     details: {
         qualitative: { informant: string; focus: string };
         quantitative: { varX: string; varY: string; population: string };
-        secondary: { source: string; year: string };
+        secondary: { varX: string; varY: string; source: string; population: string };
     };
 }
 

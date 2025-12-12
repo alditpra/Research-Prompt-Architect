@@ -15,7 +15,7 @@ const INITIAL_STATE: AppState = {
     details: {
         qualitative: { informant: '', focus: '' },
         quantitative: { varX: '', varY: '', population: '' },
-        secondary: { source: '', year: '' }
+        secondary: { varX: '', varY: '', source: '', population: '' }
     }
 };
 
@@ -90,7 +90,7 @@ export default function ResearchPromptArchitect() {
             methods: {
                 qualitative: 'Wawancara (Kualitatif)',
                 quantitative: 'Survei (Kuantitatif)',
-                secondary: 'Studi Pustaka (Sekunder)'
+                secondary: 'Kuatintatif (Sekunder)'
             },
             helpers: {
                 informant: 'Siapa narasumber utamanya? misal: Korban Banjir, Preman Pasar, Koruptor',
@@ -98,8 +98,8 @@ export default function ResearchPromptArchitect() {
                 varX: 'Faktor yang mempengaruhi. Misal: Diskon, Beban Kerja, Kualitas Produk',
                 varY: 'Yang dipengaruhi. Misal: Keputusan Beli, Stres Kerja, Loyalitas',
                 population: 'Siapa yang mengisi kuesioner? Misal: Gen Z Jakarta, Karyawan Bank',
-                source: 'Misal: Laporan Keuangan Tahunan, Arsip Berita Online, Putusan Pengadilan',
-                year: 'Misal: 2019-2024, Era Reformasi (1998-2010), Semester I 2023'
+                source: 'Misal: BPS, World Bank, Laporan Tahunan Perusahaan, Data Curah Hujan BMKG',
+                year: 'Periode waktu dan subjek. Misal: Perusahaan Manufaktur 2019-2024, Lahan Sawah Jatim 2023'
             },
             inputLabels: {
                 informant: 'Informan Kunci',
@@ -108,7 +108,7 @@ export default function ResearchPromptArchitect() {
                 varY: 'Variabel Y (Akibat)',
                 population: 'Target Responden',
                 source: 'Sumber Data',
-                year: 'Periode Waktu'
+                year: 'Periode & Populasi'
             }
         },
         en: {
@@ -133,7 +133,7 @@ export default function ResearchPromptArchitect() {
             methods: {
                 qualitative: 'Interview (Qualitative)',
                 quantitative: 'Survey (Quantitative)',
-                secondary: 'Literature Review (Secondary)'
+                secondary: 'Quantitative (Secondary)'
             },
             helpers: {
                 informant: 'Who is the main source? e.g. flood victims, market thugs, corruptors.',
@@ -141,8 +141,8 @@ export default function ResearchPromptArchitect() {
                 varX: 'Influencing factor. e.g. Discount, Workload, Product Quality',
                 varY: 'The outcome. e.g. Purchase Decision, Job Stress, Loyalty',
                 population: 'Who fills the questionnaire? e.g. Gen Z, Bank Employees',
-                source: 'e.g. Annual Financial Reports, News Archives, Court Verdicts',
-                year: 'e.g. 2019-2024, Reform Era (1998-2010), 1st Sem 2023'
+                source: 'e.g. Annual Reports, World Bank Data, Rainfall Data',
+                year: 'Time period and subject. e.g. Mfg Companies 2019-2024, Rice Fields 2023'
             },
             inputLabels: {
                 informant: 'Key Informant',
@@ -151,7 +151,7 @@ export default function ResearchPromptArchitect() {
                 varY: 'Variable Y (Effect)',
                 population: 'Target Respondents',
                 source: 'Data Source',
-                year: 'Time Period'
+                year: 'Period & Population'
             }
         }
     };
@@ -171,7 +171,7 @@ export default function ResearchPromptArchitect() {
             return !!(state.details.quantitative.varX && state.details.quantitative.varY && state.details.quantitative.population);
         }
         if (state.method === 'secondary') {
-            return !!(state.details.secondary.source && state.details.secondary.year);
+            return !!(state.details.secondary.source && state.details.secondary.population && state.details.secondary.varX && state.details.secondary.varY);
         }
         return false;
     };
@@ -407,6 +407,33 @@ export default function ResearchPromptArchitect() {
 
                         {state.method === 'secondary' && (
                             <>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div className="space-y-2">
+                                        <label className="block text-sm font-medium text-gray-700">
+                                            {t.inputLabels.varX} <span className="text-red-500">*</span>
+                                        </label>
+                                        <input
+                                            type="text"
+                                            value={state.details.secondary.varX}
+                                            onChange={(e) => updateDetail('secondary', 'varX', e.target.value)}
+                                            placeholder={state.language === 'id' ? "Misal: Curah Hujan, Penggunaan Pupuk (Pisahkan koma)" : "e.g. Rainfall, Fertilizer Use"}
+                                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-gray-900"
+                                        />
+                                        <p className="text-xs text-gray-500 mt-1">{state.language === 'id' ? 'Bisa lebih dari satu, pisahkan dengan koma' : 'Can be multiple, separate with comma'}</p>
+                                    </div>
+                                    <div className="space-y-2">
+                                        <label className="block text-sm font-medium text-gray-700">
+                                            {t.inputLabels.varY} <span className="text-red-500">*</span>
+                                        </label>
+                                        <input
+                                            type="text"
+                                            value={state.details.secondary.varY}
+                                            onChange={(e) => updateDetail('secondary', 'varY', e.target.value)}
+                                            placeholder={state.language === 'id' ? "Misal: Hasil Panen Padi" : "e.g. Rice Yield"}
+                                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-gray-900"
+                                        />
+                                    </div>
+                                </div>
                                 <div className="space-y-2">
                                     <label className="block text-sm font-medium text-gray-700">
                                         {t.inputLabels.source} <span className="text-red-500">*</span>
@@ -415,6 +442,7 @@ export default function ResearchPromptArchitect() {
                                         type="text"
                                         value={state.details.secondary.source}
                                         onChange={(e) => updateDetail('secondary', 'source', e.target.value)}
+                                        placeholder={state.language === 'id' ? "Misal: BPS, Dinas Pertanian" : "e.g. Central Bureau of Statistics"}
                                         className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-gray-900"
                                     />
                                     <p className="text-xs text-gray-500 mt-1">{t.helpers.source}</p>
@@ -425,8 +453,9 @@ export default function ResearchPromptArchitect() {
                                     </label>
                                     <input
                                         type="text"
-                                        value={state.details.secondary.year}
-                                        onChange={(e) => updateDetail('secondary', 'year', e.target.value)}
+                                        value={state.details.secondary.population}
+                                        onChange={(e) => updateDetail('secondary', 'population', e.target.value)}
+                                        placeholder={state.language === 'id' ? "Misal: Lahan Sawah di Jawa Timur 2020-2024" : "e.g. Rice Fields in East Java 2020-2024"}
                                         className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-gray-900"
                                     />
                                     <p className="text-xs text-gray-500 mt-1">{t.helpers.year}</p>

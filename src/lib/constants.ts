@@ -18,12 +18,12 @@ export const METHOD_LABELS = {
     en: {
         qualitative: 'Interview (Qualitative Method)',
         quantitative: 'Survey (Quantitative Method)',
-        secondary: 'Literature Review (Secondary Data)'
+        secondary: 'Quantitative Secondary (Secondary Data)'
     },
     id: {
         qualitative: 'Wawancara (Metode Kualitatif)',
         quantitative: 'Survei (Metode Kuantitatif)',
-        secondary: 'Studi Pustaka (Data Sekunder)'
+        secondary: 'Kuantitatif Sekunder (Data Sekunder)'
     }
 };
 
@@ -49,12 +49,12 @@ export const METHOD_SPECIFIC_TASKS = {
     },
 
     secondary: {
-        id: `1. Teknik Sampling: Jelaskan bagaimana data sekunder akan dipilih (purposive sampling, kriteria inklusi/eksklusi).
-2. Metode Analisis: Tentukan pendekatan analisis yang sesuai (content analysis, trend analysis, meta-analysis, comparative analysis).
-3. Validitas Data: Jelaskan bagaimana memastikan kredibilitas dan reliabilitas sumber data sekunder.`,
+        id: `1. Pra-Analisis Data: Jelaskan rencana uji prasyarat (Uji Normalitas, Uji Stasioneritas untuk time series, dll).
+2. Uji Asumsi Klasik: Rincikan uji yang relevan (Multikolinearitas, Heteroskedastisitas, Autokorelasi).
+3. Teknik Analisis: Tentukan jenis regresi yang tepat (Regresi Data Panel, Berganda, atau Path Analysis) sesuai struktur data.`,
 
-        en: `1. Sampling Technique: Explain how secondary data will be selected (purposive sampling, inclusion/exclusion criteria).
-2. Analysis Method: Determine appropriate analytical approach (content analysis, trend analysis, meta-analysis, comparative analysis).
-3. Data Validity: Explain how to ensure credibility and reliability of secondary data sources.`
+        en: `1. Data Pre-Analysis: Explain prerequisite tests (Normality Test, Stationarity Test for time series, etc).
+2. Classical Assumption Tests: Detail relevant tests (Multicollinearity, Heteroscedasticity, Autocorrelation).
+3. Analysis Technique: Determine appropriate regression type (Panel Data, Multiple Regression, or Path Analysis) based on data structure.`
     }
 };
