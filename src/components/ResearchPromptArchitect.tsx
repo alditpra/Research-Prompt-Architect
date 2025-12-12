@@ -97,7 +97,7 @@ export default function ResearchPromptArchitect() {
                 focus: 'Apa fenomena/pengalaman unik yang ingin digali?',
                 varX: 'Faktor yang mempengaruhi. Misal: Diskon, Beban Kerja, Kualitas Produk',
                 varY: 'Yang dipengaruhi. Misal: Keputusan Beli, Stres Kerja, Loyalitas',
-                population: 'Siapa yang mengisi kuesioner? Misal: Gen Z Jakarta, Karyawan Bank',
+                population: 'Siapa yang mengisi kuesioner? Misal: Gen Z Tangerang, Karyawan Bank',
                 source: 'Misal: BPS, World Bank, Laporan Tahunan Perusahaan, Data Curah Hujan BMKG',
                 year: 'Periode waktu dan subjek. Misal: Perusahaan Manufaktur 2019-2024, Lahan Sawah Jatim 2023'
             },
