@@ -392,6 +392,78 @@ export default function ResearchPromptArchitect() {
                         </div>
                     </div>
 
+                    {/* Data Source Upload (Integrated) */}
+                    <div className="bg-gray-50 p-6 rounded-xl border border-gray-200 animate-in fade-in duration-500">
+                        <div className="flex items-center gap-3 mb-4">
+                            <div className="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600 text-sm">
+                                📊
+                            </div>
+                            <h2 className="font-semibold text-gray-800">
+                                {state.language === 'id' ? 'Data Sumber (Opsional)' : 'Data Source (Optional)'}
+                            </h2>
+                        </div>
+
+                        <div className="space-y-4">
+                            <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-indigo-500 transition-colors bg-white">
+                                <input
+                                    type="file"
+                                    id="fileUpload"
+                                    multiple
+                                    accept=".xlsx, .csv"
+                                    onChange={handleFileUpload}
+                                    className="hidden"
+                                />
+                                <label htmlFor="fileUpload" className="cursor-pointer block">
+                                    <p className="text-indigo-600 font-medium text-lg">
+                                        {uploading ? 'Scanning data...' : (state.language === 'id' ? 'Klik untuk Upload Excel / CSV' : 'Click to Upload Excel / CSV')}
+                                    </p>
+                                    <p className="text-xs text-gray-500 mt-2">
+                                        {state.language === 'id' ? 'AI akan membaca nama kolom & tipe data (Privasi aman, file tidak dikirim ke server)' : 'AI will scan columns & data types (Privacy safe, local processing)'}
+                                    </p>
+                                </label>
+                            </div>
+
+                            {/* File Preview Cards */}
+                            {state.uploadedFiles.length > 0 && (
+                                <div className="grid gap-3">
+                                    {state.uploadedFiles.map((file, idx) => (
+                                        <div key={idx} className="bg-white p-4 rounded-lg border border-gray-200 text-sm shadow-sm relative group">
+                                            <div className="flex justify-between items-center mb-2">
+                                                <div className="flex items-center gap-2">
+                                                    <span className="text-2xl">📄</span>
+                                                    <span className="font-semibold text-gray-700">{file.fileName}</span>
+                                                </div>
+                                                <button onClick={() => removeFile(idx)} className="text-gray-400 hover:text-red-500">
+                                                    🗑️
+                                                </button>
+                                            </div>
+                                            {file.sheets.map((sheet, sIdx) => (
+                                                <div key={sIdx} className="ml-8 mb-3 text-xs text-gray-600">
+                                                    <div className="flex items-center gap-2 mb-1">
+                                                        <span className="font-medium bg-gray-100 px-2 py-0.5 rounded border border-gray-200">Sheet: {sheet.sheetName}</span>
+                                                        <span className="text-gray-400">•</span>
+                                                        <span className="font-medium text-emerald-600">{sheet.rowCount} rows</span>
+                                                    </div>
+                                                    <div className="flex flex-wrap gap-1 mt-2">
+                                                        {sheet.columns.slice(0, 8).map((col, cIdx) => (
+                                                            <span key={cIdx} className={`px-2 py-1 rounded-md text-[10px] border ${col.type === 'numeric' ? 'bg-blue-50 text-blue-700 border-blue-100' :
+                                                                col.type === 'categorical' ? 'bg-orange-50 text-orange-700 border-orange-100' :
+                                                                    'bg-gray-50 text-gray-600 border-gray-100'
+                                                                }`}>
+                                                                {col.name} <span className="opacity-50">({col.type.substr(0, 1).toUpperCase()})</span>
+                                                            </span>
+                                                        ))}
+                                                        {sheet.columns.length > 8 && <span className="px-2 py-1 text-gray-400">+ more</span>}
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+                    </div>
+
                     <div className="space-y-2">
                         <label className="block text-sm font-medium text-gray-700">
                             {t.topicLabel} {state.uploadedFiles.length === 0 ? <span className="text-red-500">*</span> : <span className="text-gray-400 text-xs font-normal">(Optional by dataset)</span>}
@@ -429,77 +501,7 @@ export default function ResearchPromptArchitect() {
                     )}
                 </section>
 
-                {/* Phase 3: Data Source (NEW) */}
-                <section className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 transition-all hover:shadow-md animate-in fade-in duration-500">
-                    <div className="flex items-center gap-3 mb-6">
-                        <div className="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600">
-                            📊
-                        </div>
-                        <h2 className="text-xl font-semibold text-gray-800">
-                            {state.language === 'id' ? 'Data Sumber (Opsional)' : 'Data Source (Optional)'}
-                        </h2>
-                    </div>
 
-                    <div className="space-y-4">
-                        <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-indigo-500 transition-colors bg-gray-50/50">
-                            <input
-                                type="file"
-                                id="fileUpload"
-                                multiple
-                                accept=".xlsx, .csv"
-                                onChange={handleFileUpload}
-                                className="hidden"
-                            />
-                            <label htmlFor="fileUpload" className="cursor-pointer block">
-                                <p className="text-indigo-600 font-medium text-lg">
-                                    {uploading ? 'Scanning data...' : (state.language === 'id' ? 'Klik untuk Upload Excel / CSV' : 'Click to Upload Excel / CSV')}
-                                </p>
-                                <p className="text-xs text-gray-500 mt-2">
-                                    {state.language === 'id' ? 'AI akan membaca nama kolom & tipe data (Privasi aman, file tidak dikirim ke server)' : 'AI will scan columns & data types (Privacy safe, local processing)'}
-                                </p>
-                            </label>
-                        </div>
-
-                        {/* File Preview Cards */}
-                        {state.uploadedFiles.length > 0 && (
-                            <div className="grid gap-3">
-                                {state.uploadedFiles.map((file, idx) => (
-                                    <div key={idx} className="bg-white p-4 rounded-lg border border-gray-200 text-sm shadow-sm relative group">
-                                        <div className="flex justify-between items-center mb-2">
-                                            <div className="flex items-center gap-2">
-                                                <span className="text-2xl">📄</span>
-                                                <span className="font-semibold text-gray-700">{file.fileName}</span>
-                                            </div>
-                                            <button onClick={() => removeFile(idx)} className="text-gray-400 hover:text-red-500">
-                                                🗑️
-                                            </button>
-                                        </div>
-                                        {file.sheets.map((sheet, sIdx) => (
-                                            <div key={sIdx} className="ml-8 mb-3 text-xs text-gray-600">
-                                                <div className="flex items-center gap-2 mb-1">
-                                                    <span className="font-medium bg-gray-100 px-2 py-0.5 rounded border border-gray-200">Sheet: {sheet.sheetName}</span>
-                                                    <span className="text-gray-400">•</span>
-                                                    <span className="font-medium text-emerald-600">{sheet.rowCount} rows</span>
-                                                </div>
-                                                <div className="flex flex-wrap gap-1 mt-2">
-                                                    {sheet.columns.slice(0, 8).map((col, cIdx) => (
-                                                        <span key={cIdx} className={`px-2 py-1 rounded-md text-[10px] border ${col.type === 'numeric' ? 'bg-blue-50 text-blue-700 border-blue-100' :
-                                                            col.type === 'categorical' ? 'bg-orange-50 text-orange-700 border-orange-100' :
-                                                                'bg-gray-50 text-gray-600 border-gray-100'
-                                                            }`}>
-                                                            {col.name} <span className="opacity-50">({col.type.substr(0, 1).toUpperCase()})</span>
-                                                        </span>
-                                                    ))}
-                                                    {sheet.columns.length > 8 && <span className="px-2 py-1 text-gray-400">+ more</span>}
-                                                </div>
-                                            </div>
-                                        ))}
-                                    </div>
-                                ))}
-                            </div>
-                        )}
-                    </div>
-                </section>
 
                 {/* Phase 2: Method Strategy */}
                 <section className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 space-y-6">
