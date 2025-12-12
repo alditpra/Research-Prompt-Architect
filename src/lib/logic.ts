@@ -103,7 +103,8 @@ Berikan 5 OPSI IDE PENELITIAN yang potensial. Untuk setiap opsi, jelaskan:
 1. Judul: Yang menarik & akademis.
 2. Research Gap: Kenapa ini penting diteliti? (Hubungkan dengan gap Ideal vs Aktual jika ada).
 3. Kebaruan (Novelty): Apa bedanya dengan riset lain?
-4. Tingkat Kesulitan: (Mudah/Sedang/Sulit) & Estimasi waktu.
+4. Validasi Metode: Apakah metode ${fullMethodLabel} cocok untuk ide ini? Jelaskan singkat.
+5. Tingkat Kesulitan & Risiko: Estimasi waktu dan potensi kendala data.
 
 Gaya Bahasa: Santai tapi berbobot, memotivasi, dan inspiratif.`;
         } else {
@@ -124,7 +125,8 @@ Provide 5 POTENTIAL RESEARCH IDEAS. For each option, explain:
 1. Title: Engaging & academic.
 2. Research Gap: Why is this important? (Connect with Ideal vs Actual gap if provided).
 3. Novelty: What differentiates this from other research?
-4. Difficulty Level: (Easy/Medium/Hard) & Time estimation.
+4. Method Validation: Is ${fullMethodLabel} suitable for this idea? Briefly explain.
+5. Difficulty & Risk: Time estimation and potential data hurdles.
 
 Tone: Casual but insightful, motivating, and inspiring.`;
         }
@@ -164,9 +166,11 @@ Buatkan outline proposal penelitian (Bab 1-3) yang mencakup:
    - Buatkan langkah operasional penggunaan ${finalTool} untuk analisis data.
 ${methodTasks}
 
-4. Hipotesis/Proposisi (Jika Ada): ${method !== 'qualitative' && details.quantitative?.varZ ? 'Rumuskan hipotesis yang melibatkan variabel mediasi/moderasi (Z).' : 'Rumuskan dugaan sementara yang logis.'}
+4. Hipotesis/Proposisi (Jika Ada): ${method !== 'qualitative' ? 'Rumuskan hipotesis logis.' : 'Rumuskan proposisi penelitian.'}
 
-5. Referensi Teori: Sebutkan 3-5 teori atau kerangka konseptual yang relevan sebagai landasan penelitian.
+5. Landasan Teori (Crucial): 
+   - Sarankan Grand Theory yang relevan untuk menghubungkan variabel-variabel di atas.
+   - Sebutkan teori pendukung (Middle-range theory) untuk memperkuat argumen logika antar variabel.
 
 CATATAN: Berikan output dalam kanvas yang rapi. Gunakan teks bold untuk poin kunci dan bullet lists untuk detail.`;
     } else {
@@ -203,7 +207,9 @@ ${methodTasks}
 
 4. Hypotheses/Propositions (If applicable): ${method !== 'qualitative' ? 'Formulate logical hypotheses.' : 'Formulate research propositions.'}
 
-5. Theoretical Framework: Mention 3-5 relevant theories or conceptual frameworks as the research foundation.
+5. Theoretical Framework (Crucial):
+   - Suggest a Grand Theory relevant to connecting the variables above.
+   - Mention supporting theories (Middle-range) to strengthen the logical arguments between variables.
 
 NOTE: Provide the output in canvas. Use Bold text for key points and bullet lists for details.`;
     }
