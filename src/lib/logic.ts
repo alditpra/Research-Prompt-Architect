@@ -9,7 +9,7 @@ export function sanitizeInput(input: string): string {
         .slice(0, 2000); // Prevent extremely long inputs
 }
 
-export function formatDetailsForPrompt(method: string, details: AppState['details'], language: 'id' | 'en'): string {
+export function formatDetailsForPrompt(method: string, details: AppState['details'], language: 'id' | 'en', hasUploadedFiles: boolean = false): string {
     const labels = {
         qualitative: {
             id: { informant: 'Informan Kunci', focus: 'Fokus Galian' },
@@ -34,35 +34,93 @@ export function formatDetailsForPrompt(method: string, details: AppState['detail
         .map(key => {
             const label = methodLabels[key as keyof typeof methodLabels];
             const value = methodDetails[key as keyof typeof methodDetails] as string;
-            const displayValue = value.trim()
-                ? sanitizeInput(value)
-                : (language === 'id' ? '(Mohon berikan saran opsi yang relevan dari Teori)' : '(Please suggest relevant options based on Theory)');
+
+            let displayValue = '';
+            if (value.trim()) {
+                displayValue = sanitizeInput(value);
+            } else if (hasUploadedFiles) {
+                // If files uploaded and value empty, refer to dataset
+                // Special case for 'source' or 'population'
+                if (key === 'source' || key === 'population') {
+                    displayValue = language === 'id' ? '(Analisis otomatis dari Metadata file di atas)' : '(Auto-analyzed from File Metadata above)';
+                } else {
+                    displayValue = language === 'id' ? '(Lihat struktur dataset di atas)' : '(See dataset structure above)';
+                }
+            } else {
+                // Default fallback
+                displayValue = language === 'id' ? '(Mohon berikan saran opsi yang relevan dari Teori)' : '(Please suggest relevant options based on Theory)';
+            }
+
             return `- ${label}: ${displayValue}`;
         })
         .join('\n');
 }
 
 export function generatePrompt(state: AppState): string {
-    const { language, field, customField, topic, problem, outputMode, method, subMethod, tool, customTool, details } = state;
+    const { language, field, customField, topic, problem, outputMode, uploadedFiles, method, subMethod, tool, customTool, details } = state;
 
     // Determine final field
     const finalField = field === 'Lainnya' ? sanitizeInput(customField) : field;
 
+    // Determine final Topic (Fall back to "Inferred from dataset" if empty and files exist)
+    let finalTopic = topic.trim();
+    if (!finalTopic && uploadedFiles && uploadedFiles.length > 0) {
+        finalTopic = language === 'id'
+            ? '(TOPIC BELUM DITENTUKAN - HARAP ANALISIS DARI DATASET)'
+            : '(TOPIC UNDEFINED - PLEASE INFER FROM DATASET)';
+    } else {
+        finalTopic = sanitizeInput(topic);
+    }
+
     // Determine final tool
     const finalTool = tool === 'Lainnya' ? sanitizeInput(customTool) : tool;
 
+    // Build Dataset Context
+    let datasetContext = '';
+    if (uploadedFiles && uploadedFiles.length > 0) {
+        const title = language === 'id' ? 'DATASET TERSEDIA (SUMBER DATA):' : 'AVAILABLE DATASETS (DATA SOURCE):';
+        const content = uploadedFiles.map(file => {
+            return `File: ${file.fileName}\n` + file.sheets.map(sheet => {
+                const colInfo = sheet.columns.slice(0, 15).map(c => `   - ${c.name} [${c.type}]`).join('\n');
+                // Format raw preview as JSON-like structure for clarity
+                const rawStructure = JSON.stringify(sheet.rawPreview);
+
+                return `  Sheet: ${sheet.sheetName} (${sheet.rowCount} rows)
+  Variables Detected:
+${colInfo}
+  Table Structure Snippet (Top 8 rows):
+  ${rawStructure}`;
+            }).join('\n\n');
+        }).join('\n\n' + '='.repeat(20) + '\n');
+
+        datasetContext = `\n${title}\n${content}\n${language === 'id' ? '(PENTING: Gunakan "Table Structure Snippet" untuk memahami header yang kompleks, misal data BPS/Time Series. Identifikasi variabel yang sebenarnya dari struktur tersebut)' : '(IMPORTANT: Use "Table Structure Snippet" to understand complex headers, e.g. Time Series/BPS data. Identify true variables from this structure)'}\n`;
+    }
     // Get style guide
     const styleGuide = STYLE_GUIDE[language];
 
+    // Check if Sub-Method is "AI Recommendation"
+    const isAiMethod = subMethod?.includes('Saran AI') || subMethod?.includes('AI Recommendation');
+    const displaySubMethod = isAiMethod ? (language === 'id' ? 'Saran AI (Belum Ditentukan)' : 'AI Recommendation (To Be Determined)') : subMethod;
+
     // Get method label with Sub-Method
     const baseMethodLabel = METHOD_LABELS[language][method];
-    const fullMethodLabel = subMethod ? `${baseMethodLabel} - ${subMethod}` : baseMethodLabel;
+    const fullMethodLabel = subMethod ? `${baseMethodLabel} - ${displaySubMethod}` : baseMethodLabel;
 
     // Format method details
-    const detailsFormatted = formatDetailsForPrompt(method, details, language);
+    const hasUploadedFilesFlag = uploadedFiles && uploadedFiles.length > 0;
+    const detailsFormatted = formatDetailsForPrompt(method, details, language, hasUploadedFilesFlag);
 
-    // Get method-specific tasks
-    const methodTasks = METHOD_SPECIFIC_TASKS[method][language];
+    // Get method-specific tasks (Override if AI Method)
+    let methodTasks = METHOD_SPECIFIC_TASKS[method][language];
+    if (isAiMethod) {
+        if (language === 'id') {
+            methodTasks = `1. REKOMENDASI DESAIN (CRITICAL): Analisis data/variabel di atas, lalu tentukan Desain Spesifik yang paling tepat (misal: Studi Kasus vs Fenomenologi, atau Eksperimen vs Korelasional). Jelaskan alasan metodologisnya secara kuat.
+` + methodTasks;
+        } else {
+            methodTasks = `1. DESIGN RECOMMENDATION (CRITICAL): Analyze the data/variables above, then determine the most appropriate Specific Design (e.g., Case Study vs Phenomenology, or Experiment vs Correlational). Provide strong methodological justification.
+` + methodTasks;
+        }
+    }
 
     // Format Problem / Gap
     let problemSection = '';
@@ -94,9 +152,10 @@ export function generatePrompt(state: AppState): string {
 Tujuan: Membantu saya menemukan ide penelitian yang segar dan valid (Brainstorming).
 
 KONTEKS SEMENTARA:
-- Topik Minat: ${sanitizeInput(topic)}
+- Topik Minat: ${finalTopic}
 - Metode Bayangan: ${fullMethodLabel}
 - ${problemSection}
+${datasetContext}
 
 DATA YANG TERSEDIA:
 ${detailsFormatted}
@@ -116,9 +175,10 @@ Gaya Bahasa: Santai tapi berbobot, memotivasi, dan inspiratif.`;
 Goal: Help me find fresh and valid research ideas (Brainstorming).
 
 TENTATIVE CONTEXT:
-- Interest Topic: ${sanitizeInput(topic)}
+- Interest Topic: ${finalTopic}
 - Tentative Method: ${fullMethodLabel}
 - ${problemSection}
+${datasetContext}
 
 AVAILABLE DATA:
 ${detailsFormatted}
@@ -143,12 +203,13 @@ Tone: Casual but insightful, motivating, and inspiring.`;
 Saya sedang menyusun PROPOSAL PENELITIAN LENGKAP dengan detail berikut:
 
 KONTEKS PENELITIAN:
-- Topik: ${sanitizeInput(topic)}
+- Topik: ${finalTopic}
 - Metode Utama: ${baseMethodLabel}
 - Desain Spesifik: ${subMethod || '-'}
 - Alat Analisis: ${finalTool || '-'}
 
 ${problemSection}
+${datasetContext}
 
 DETAIL DATA & VARIABEL:
 ${detailsFormatted}
@@ -158,6 +219,10 @@ ${styleGuide}
 TUGAS ANDA:
 Buatkan outline proposal penelitian (Bab 1-3) yang mencakup:
 
+0. CEK VALIDITAS DATA (PENTING):
+   - Review "Table Structure Snippet" di atas. Apakah tipe data (Numerik/Kategorial) memadai untuk dianalisis menggunakan ${finalTool}?
+   - Jika ada ketidakcocokan (misal: Regresi Linear pada data teks), berikan PERINGATAN KERAS di awal output.
+
 1. Judul Penelitian: Buatkan judul yang akademis, spesifik, dan menarik (maksimal 20 kata). Hindari judul klise.
 
 2. Latar Belakang & Masalah:
@@ -165,7 +230,8 @@ Buatkan outline proposal penelitian (Bab 1-3) yang mencakup:
    - Rumusan Masalah: Turunkan 3-4 pertanyaan penelitian spesifik dari gap tersebut.
 
 3. Detail Metodologi (Sangat Penting):
-   - Jelaskan alasan pemilihan desain ${subMethod} untuk topik ini.
+   - ${isAiMethod ? 'Tentukan desain spesifik dan jelaskan alasannya.' : `Jelaskan alasan pemilihan desain ${subMethod} untuk topik ini.`}
+   - TABEL DEFINISI OPERASIONAL: Buat tabel yang memetakan [Nama Variabel] -> [Kolom di Dataset] -> [Skala Data (Nominal/Ordinal/Rasio)] -> [Indikator/Teori Referensi].
    - Buatkan langkah operasional penggunaan ${finalTool} untuk analisis data.
 ${methodTasks}
 
@@ -182,12 +248,13 @@ CATATAN: Berikan output dalam kanvas yang rapi. Gunakan teks bold untuk poin kun
 I am writing a FULL RESEARCH PROPOSAL with the following details:
 
 RESEARCH CONTEXT:
-- Topic: ${sanitizeInput(topic)}
+- Topic: ${finalTopic}
 - Main Method: ${baseMethodLabel}
 - Specific Design: ${subMethod || '-'}
 - Analysis Tool: ${finalTool || '-'}
 
 ${problemSection}
+${datasetContext}
 
 DATA & VARIABLES:
 ${detailsFormatted}
@@ -197,6 +264,10 @@ ${styleGuide}
 YOUR TASK:
 Create a comprehensive research proposal outline (Chapters 1-3) including:
 
+0. DATA FEASIBILITY CHECK (CRITICAL):
+   - Review the "Table Structure Snippet" above. Are the data types (Numeric/Categorical) suitable for analysis using ${finalTool}?
+   - If there is a mismatch (e.g., Linear Regression on text data), provide a STRONG WARNING at the beginning.
+
 1. Research Title: Create an academic, specific, and engaging title (maximum 20 words). Avoid cliches.
 
 2. Background & Problem:
@@ -204,7 +275,8 @@ Create a comprehensive research proposal outline (Chapters 1-3) including:
    - Problem Statement: Derive 3-4 specific research questions from that gap.
 
 3. Methodological Details (Crucial):
-   - Justify the choice of ${subMethod} design for this topic.
+   - ${isAiMethod ? 'Determine the specific design and justify the choice.' : `Justify the choice of ${subMethod} design for this topic.`}
+   - OPERATIONAL DEFINITION TABLE: Create a table mapping [Variable Name] -> [Dataset Column] -> [Data Scale (Nominal/Ordinal/Ratio)] -> [Indicator/Theoretical Reference].
    - Outline operational steps for using ${finalTool} for data analysis.
 ${methodTasks}
 

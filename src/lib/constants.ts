@@ -61,16 +61,16 @@ export const METHOD_SPECIFIC_TASKS = {
 
 export const SUB_METHODS = {
     qualitative: {
-        id: ['Studi Kasus', 'Fenomenologi', 'Etnografi', 'Studi Pustaka (Systematic Review)'],
-        en: ['Case Study', 'Phenomenology', 'Ethnography', 'Literature Review']
+        id: ['Saran AI (Analisis Otomatis)', 'Studi Kasus', 'Fenomenologi', 'Etnografi', 'Studi Pustaka (Systematic Review)'],
+        en: ['AI Recommendation (Auto-Analysis)', 'Case Study', 'Phenomenology', 'Ethnography', 'Literature Review']
     },
     quantitative: {
-        id: ['Korelasional', 'Komparatif', 'Eksperimen', 'Deskriptif'],
-        en: ['Correlational', 'Comparative', 'Experimental', 'Descriptive']
+        id: ['Saran AI (Analisis Otomatis)', 'Korelasional', 'Komparatif', 'Eksperimen', 'Deskriptif'],
+        en: ['AI Recommendation (Auto-Analysis)', 'Correlational', 'Comparative', 'Experimental', 'Descriptive']
     },
     secondary: {
-        id: ['Regresi Data Panel', 'Time Series', 'Korelasional', 'Path Analysis'],
-        en: ['Panel Data Regression', 'Time Series', 'Correlational', 'Path Analysis']
+        id: ['Saran AI (Analisis Otomatis)', 'Regresi Data Panel', 'Time Series', 'Korelasional', 'Path Analysis'],
+        en: ['AI Recommendation (Auto-Analysis)', 'Panel Data Regression', 'Time Series', 'Correlational', 'Path Analysis']
     }
 };
 

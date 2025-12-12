@@ -5,6 +5,8 @@ import { Copy, CheckCircle, GraduationCap, Languages, FileText, Users, BookOpen 
 import { AppState, FieldType, MethodType } from '@/types';
 import { generatePrompt } from '@/lib/logic';
 import { METHOD_LABELS, SUB_METHODS, ANALYSIS_TOOLS } from '@/lib/constants';
+import { UploadedFile } from '@/types';
+import { parseUploadedFile } from '@/lib/fileParser';
 
 const INITIAL_STATE: AppState = {
     language: 'id',
@@ -13,6 +15,7 @@ const INITIAL_STATE: AppState = {
     topic: '',
     problem: { ideal: '', actual: '' },
     outputMode: 'proposal',
+    uploadedFiles: [],
     method: 'quantitative',
     subMethod: '',
     tool: '',
@@ -32,6 +35,51 @@ export default function ResearchPromptArchitect() {
     const [generatedPrompt, setGeneratedPrompt] = useState('');
     const [isCopied, setIsCopied] = useState(false);
     const outputRef = useRef<HTMLDivElement>(null);
+    const [uploading, setUploading] = useState(false);
+
+    const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+        const files = event.target.files;
+        if (!files || files.length === 0) return;
+
+        setUploading(true);
+        const newUploadedFiles: UploadedFile[] = [];
+
+        try {
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                const sheets = await parseUploadedFile(file);
+                newUploadedFiles.push({ fileName: file.name, sheets });
+            }
+
+            setState(prev => ({
+                ...prev,
+                uploadedFiles: [...prev.uploadedFiles, ...newUploadedFiles],
+                // Auto-switch to quantitative if qualitative was selected (since dataset implies quant/secondary)
+                method: prev.method === 'qualitative' ? 'quantitative' : prev.method,
+                // Auto-fill population logic (simple heuristic: take max row count)
+                details: {
+                    ...prev.details,
+                    quantitative: {
+                        ...prev.details.quantitative,
+                        population: prev.details.quantitative.population || (newUploadedFiles[0]?.sheets[0]?.rowCount ? `Approx. ${newUploadedFiles[0].sheets[0].rowCount} rows (from dataset)` : '')
+                    }
+                }
+            }));
+        } catch (error) {
+            console.error("Upload failed", error);
+            alert("Gagal membaca file. Pastikan format .xlsx atau .csv valid.");
+        } finally {
+            setUploading(false);
+        }
+    };
+
+    const removeFile = (index: number) => {
+        setState(prev => {
+            const newFiles = [...prev.uploadedFiles];
+            newFiles.splice(index, 1);
+            return { ...prev, uploadedFiles: newFiles };
+        });
+    };
 
     // Load from local storage
     useEffect(() => {
@@ -103,7 +151,7 @@ export default function ResearchPromptArchitect() {
             methods: {
                 qualitative: 'Wawancara (Kualitatif)',
                 quantitative: 'Survei (Kuantitatif)',
-                secondary: 'Kuatintatif (Sekunder)'
+                secondary: 'Kuantitatif (Sekunder)'
             },
             helpers: {
                 informant: 'Siapa narasumber utamanya? misal: Korban Banjir, Preman Pasar, Koruptor',
@@ -181,20 +229,29 @@ export default function ResearchPromptArchitect() {
 
     // Validation Logic
     const getIsFormValid = () => {
+        // Basic required fields that define the structure
         if (!state.field) return false;
         if (state.field === 'Lainnya' && !state.customField) return false;
-        if (!state.topic) return false;
-
+        if (!state.subMethod) return false;
+        if (!state.tool) return false;
         if (state.tool === 'Lainnya' && !state.customTool) return false;
 
+        // Topic is required ONLY if no files are uploaded
+        // If files are present, Topic can be inferred or optional
+        if (state.uploadedFiles.length === 0 && !state.topic) return false;
+
+        // If Data Uploaded, skip detailed manual checks for specific method inputs
+        // (Assuming files provide enough context for those details, or they are less critical)
+        if (state.uploadedFiles.length > 0) return true;
+
         if (state.method === 'qualitative') {
-            return !!(state.details.qualitative.informant && state.details.qualitative.focus && state.subMethod && state.tool);
+            return !!(state.details.qualitative.informant && state.details.qualitative.focus);
         }
         if (state.method === 'quantitative') {
-            return !!(state.details.quantitative.population && state.subMethod && state.tool);
+            return !!(state.details.quantitative.population);
         }
         if (state.method === 'secondary') {
-            return !!(state.details.secondary.source && state.details.secondary.population && state.subMethod && state.tool);
+            return !!(state.details.secondary.source && state.details.secondary.population);
         }
         return false;
     };
@@ -269,6 +326,33 @@ export default function ResearchPromptArchitect() {
                     </button>
                 </header>
 
+                {/* Output Mode Selection (Moved to Top) */}
+                <section className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 space-y-4">
+                    <label className="block text-sm font-medium text-gray-700">
+                        {t.outputModeLabel} <span className="text-red-500">*</span>
+                    </label>
+                    <div className="flex bg-gray-50 p-1 rounded-lg">
+                        <button
+                            onClick={() => updateState('outputMode', 'brainstorming')}
+                            className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-all ${state.outputMode === 'brainstorming'
+                                ? 'bg-white text-indigo-600 shadow-sm ring-1 ring-black/5'
+                                : 'text-gray-500 hover:text-gray-900'
+                                }`}
+                        >
+                            ✨ {t.outputModes.brainstorming}
+                        </button>
+                        <button
+                            onClick={() => updateState('outputMode', 'proposal')}
+                            className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-all ${state.outputMode === 'proposal'
+                                ? 'bg-white text-indigo-600 shadow-sm ring-1 ring-black/5'
+                                : 'text-gray-500 hover:text-gray-900'
+                                }`}
+                        >
+                            📄 {t.outputModes.proposal}
+                        </button>
+                    </div>
+                </section>
+
                 {/* Phase 1: Context */}
                 <section className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 space-y-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -310,62 +394,110 @@ export default function ResearchPromptArchitect() {
 
                     <div className="space-y-2">
                         <label className="block text-sm font-medium text-gray-700">
-                            {t.topicLabel} <span className="text-red-500">*</span>
+                            {t.topicLabel} {state.uploadedFiles.length === 0 ? <span className="text-red-500">*</span> : <span className="text-gray-400 text-xs font-normal">(Optional by dataset)</span>}
                         </label>
                         <input
                             type="text"
                             value={state.topic}
                             onChange={(e) => updateState('topic', e.target.value)}
-                            placeholder={t.topicPlaceholder}
+                            placeholder={state.uploadedFiles.length > 0 ? (state.language === 'id' ? "(Opsional: Kosongkan untuk saran AI dari data)" : "(Optional: Leave empty for AI suggestion)") : t.topicPlaceholder}
                             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-gray-900"
                         />
                     </div>
 
-                    <div className="space-y-4">
-                        <label className="block text-sm font-medium text-gray-700">
-                            {t.outputModeLabel} <span className="text-red-500">*</span>
-                        </label>
-                        <div className="flex bg-gray-50 p-1 rounded-lg">
-                            <button
-                                onClick={() => updateState('outputMode', 'brainstorming')}
-                                className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-all ${state.outputMode === 'brainstorming'
-                                    ? 'bg-white text-indigo-600 shadow-sm ring-1 ring-black/5'
-                                    : 'text-gray-500 hover:text-gray-900'
-                                    }`}
-                            >
-                                ✨ {t.outputModes.brainstorming}
-                            </button>
-                            <button
-                                onClick={() => updateState('outputMode', 'proposal')}
-                                className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-all ${state.outputMode === 'proposal'
-                                    ? 'bg-white text-indigo-600 shadow-sm ring-1 ring-black/5'
-                                    : 'text-gray-500 hover:text-gray-900'
-                                    }`}
-                            >
-                                📄 {t.outputModes.proposal}
-                            </button>
+                    {state.outputMode === 'proposal' && (
+                        <div className="space-y-4">
+                            <label className="block text-sm font-medium text-gray-700">
+                                {t.problemLabel}
+                            </label>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <textarea
+                                    value={state.problem.ideal}
+                                    onChange={(e) => setState(prev => ({ ...prev, problem: { ...prev.problem, ideal: e.target.value } }))}
+                                    placeholder={t.problemIdealPlaceholder}
+                                    className="w-full px-4 py-2 border border-blue-200 bg-blue-50/30 rounded-lg focus:ring-2 focus:ring-indigo-500 min-h-[100px] text-gray-900 text-sm"
+                                />
+                                <textarea
+                                    value={state.problem.actual}
+                                    onChange={(e) => setState(prev => ({ ...prev, problem: { ...prev.problem, actual: e.target.value } }))}
+                                    placeholder={t.problemActualPlaceholder}
+                                    className="w-full px-4 py-2 border border-red-200 bg-red-50/30 rounded-lg focus:ring-2 focus:ring-indigo-500 min-h-[100px] text-gray-900 text-sm"
+                                />
+                            </div>
+                            <p className="text-xs text-gray-500">{t.problemNote}</p>
                         </div>
+                    )}
+                </section>
+
+                {/* Phase 3: Data Source (NEW) */}
+                <section className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 transition-all hover:shadow-md animate-in fade-in duration-500">
+                    <div className="flex items-center gap-3 mb-6">
+                        <div className="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600">
+                            📊
+                        </div>
+                        <h2 className="text-xl font-semibold text-gray-800">
+                            {state.language === 'id' ? 'Data Sumber (Opsional)' : 'Data Source (Optional)'}
+                        </h2>
                     </div>
 
                     <div className="space-y-4">
-                        <label className="block text-sm font-medium text-gray-700">
-                            {t.problemLabel}
-                        </label>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <textarea
-                                value={state.problem.ideal}
-                                onChange={(e) => setState(prev => ({ ...prev, problem: { ...prev.problem, ideal: e.target.value } }))}
-                                placeholder={t.problemIdealPlaceholder}
-                                className="w-full px-4 py-2 border border-blue-200 bg-blue-50/30 rounded-lg focus:ring-2 focus:ring-indigo-500 min-h-[100px] text-gray-900 text-sm"
+                        <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-indigo-500 transition-colors bg-gray-50/50">
+                            <input
+                                type="file"
+                                id="fileUpload"
+                                multiple
+                                accept=".xlsx, .csv"
+                                onChange={handleFileUpload}
+                                className="hidden"
                             />
-                            <textarea
-                                value={state.problem.actual}
-                                onChange={(e) => setState(prev => ({ ...prev, problem: { ...prev.problem, actual: e.target.value } }))}
-                                placeholder={t.problemActualPlaceholder}
-                                className="w-full px-4 py-2 border border-red-200 bg-red-50/30 rounded-lg focus:ring-2 focus:ring-indigo-500 min-h-[100px] text-gray-900 text-sm"
-                            />
+                            <label htmlFor="fileUpload" className="cursor-pointer block">
+                                <p className="text-indigo-600 font-medium text-lg">
+                                    {uploading ? 'Scanning data...' : (state.language === 'id' ? 'Klik untuk Upload Excel / CSV' : 'Click to Upload Excel / CSV')}
+                                </p>
+                                <p className="text-xs text-gray-500 mt-2">
+                                    {state.language === 'id' ? 'AI akan membaca nama kolom & tipe data (Privasi aman, file tidak dikirim ke server)' : 'AI will scan columns & data types (Privacy safe, local processing)'}
+                                </p>
+                            </label>
                         </div>
-                        <p className="text-xs text-gray-500">{t.problemNote}</p>
+
+                        {/* File Preview Cards */}
+                        {state.uploadedFiles.length > 0 && (
+                            <div className="grid gap-3">
+                                {state.uploadedFiles.map((file, idx) => (
+                                    <div key={idx} className="bg-white p-4 rounded-lg border border-gray-200 text-sm shadow-sm relative group">
+                                        <div className="flex justify-between items-center mb-2">
+                                            <div className="flex items-center gap-2">
+                                                <span className="text-2xl">📄</span>
+                                                <span className="font-semibold text-gray-700">{file.fileName}</span>
+                                            </div>
+                                            <button onClick={() => removeFile(idx)} className="text-gray-400 hover:text-red-500">
+                                                🗑️
+                                            </button>
+                                        </div>
+                                        {file.sheets.map((sheet, sIdx) => (
+                                            <div key={sIdx} className="ml-8 mb-3 text-xs text-gray-600">
+                                                <div className="flex items-center gap-2 mb-1">
+                                                    <span className="font-medium bg-gray-100 px-2 py-0.5 rounded border border-gray-200">Sheet: {sheet.sheetName}</span>
+                                                    <span className="text-gray-400">•</span>
+                                                    <span className="font-medium text-emerald-600">{sheet.rowCount} rows</span>
+                                                </div>
+                                                <div className="flex flex-wrap gap-1 mt-2">
+                                                    {sheet.columns.slice(0, 8).map((col, cIdx) => (
+                                                        <span key={cIdx} className={`px-2 py-1 rounded-md text-[10px] border ${col.type === 'numeric' ? 'bg-blue-50 text-blue-700 border-blue-100' :
+                                                            col.type === 'categorical' ? 'bg-orange-50 text-orange-700 border-orange-100' :
+                                                                'bg-gray-50 text-gray-600 border-gray-100'
+                                                            }`}>
+                                                            {col.name} <span className="opacity-50">({col.type.substr(0, 1).toUpperCase()})</span>
+                                                        </span>
+                                                    ))}
+                                                    {sheet.columns.length > 8 && <span className="px-2 py-1 text-gray-400">+ more</span>}
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                ))}
+                            </div>
+                        )}
                     </div>
                 </section>
 
@@ -376,19 +508,28 @@ export default function ResearchPromptArchitect() {
                             { id: 'qualitative', icon: Users, label: t.methods.qualitative },
                             { id: 'quantitative', icon: FileText, label: t.methods.quantitative },
                             { id: 'secondary', icon: BookOpen, label: t.methods.secondary },
-                        ].map((tab) => (
-                            <button
-                                key={tab.id}
-                                onClick={() => updateState('method', tab.id as AppState['method'])}
-                                className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 ${state.method === tab.id
-                                    ? 'bg-white text-indigo-600 shadow-sm ring-1 ring-black/5'
-                                    : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
-                                    }`}
-                            >
-                                <tab.icon className="w-4 h-4" />
-                                {tab.label}
-                            </button>
-                        ))}
+                        ].map((tab) => {
+                            const isFilesUploaded = state.uploadedFiles.length > 0;
+                            const isDisabled = isFilesUploaded && tab.id === 'qualitative';
+
+                            return (
+                                <button
+                                    key={tab.id}
+                                    onClick={() => !isDisabled && updateState('method', tab.id as AppState['method'])}
+                                    disabled={isDisabled}
+                                    className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 ${state.method === tab.id
+                                        ? 'bg-white text-indigo-600 shadow-sm ring-1 ring-black/5'
+                                        : isDisabled
+                                            ? 'text-gray-300 cursor-not-allowed bg-gray-50'
+                                            : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
+                                        }`}
+                                    title={isDisabled ? (state.language === 'id' ? 'Kualitatif tidak tersedia saat mode Data Upload' : 'Qualitative disabled in Data Upload mode') : ''}
+                                >
+                                    <tab.icon className={`w-4 h-4 ${isDisabled ? 'opacity-50' : ''}`} />
+                                    {tab.label}
+                                </button>
+                            );
+                        })}
                     </div>
 
                     {/* Sub-Method & Tool Selection */}
@@ -440,163 +581,182 @@ export default function ResearchPromptArchitect() {
                         )}
                     </div>
 
-                    <div className="grid gap-6 animate-in fade-in duration-300">
-                        {state.method === 'qualitative' && (
-                            <>
-                                <div className="space-y-2">
-                                    <label className="block text-sm font-medium text-gray-700">
-                                        {t.inputLabels.informant} <span className="text-red-500">*</span>
-                                    </label>
-                                    <input
-                                        type="text"
-                                        value={state.details.qualitative.informant}
-                                        onChange={(e) => updateDetail('qualitative', 'informant', e.target.value)}
-                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-gray-900"
-                                    />
-                                    <p className="text-xs text-gray-500 mt-1">{t.helpers.informant}</p>
-                                </div>
-                                <div className="space-y-2">
-                                    <label className="block text-sm font-medium text-gray-700">
-                                        {t.inputLabels.focus} <span className="text-red-500">*</span>
-                                    </label>
-                                    <input
-                                        type="text"
-                                        value={state.details.qualitative.focus}
-                                        onChange={(e) => updateDetail('qualitative', 'focus', e.target.value)}
-                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-gray-900"
-                                    />
-                                    <p className="text-xs text-gray-500 mt-1">{t.helpers.focus}</p>
-                                </div>
-                            </>
-                        )}
+                    {/* Data Details OR Auto-Detection Banner */}
+                    {state.uploadedFiles.length > 0 ? (
+                        // --- AUTO-DETECTION MODE ---
+                        <div className="bg-gradient-to-br from-indigo-50 to-white p-6 rounded-xl border border-indigo-100 flex items-center justify-between gap-4 animate-in fade-in duration-500 mt-6">
+                            <div>
+                                <h3 className="text-lg font-semibold text-indigo-900 mb-1">
+                                    {state.language === 'id' ? '✨ Mode Deteksi Otomatis Aktif' : '✨ Auto-Detection Mode Active'}
+                                </h3>
+                                <p className="text-indigo-700 text-sm leading-relaxed">
+                                    {state.language === 'id'
+                                        ? 'Variabel, Populasi, dan Unit Analisis akan diambil otomatis dari file data Anda.'
+                                        : 'Variables, Population, and Analysis Units will be automatically extracted from your data files.'}
+                                </p>
+                            </div>
+                            <div className="text-4xl">🤖</div>
+                        </div>
+                    ) : (
+                        // --- MANUAL INPUT MODE ---
+                        <div className="grid gap-6 animate-in fade-in duration-300 mt-6 pt-6 border-t border-gray-100">
+                            {state.method === 'qualitative' && (
+                                <>
+                                    <div className="space-y-2">
+                                        <label className="block text-sm font-medium text-gray-700">
+                                            {t.inputLabels.informant} <span className="text-red-500">*</span>
+                                        </label>
+                                        <input
+                                            type="text"
+                                            value={state.details.qualitative.informant}
+                                            onChange={(e) => updateDetail('qualitative', 'informant', e.target.value)}
+                                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-gray-900"
+                                        />
+                                        <p className="text-xs text-gray-500 mt-1">{t.helpers.informant}</p>
+                                    </div>
+                                    <div className="space-y-2">
+                                        <label className="block text-sm font-medium text-gray-700">
+                                            {t.inputLabels.focus} <span className="text-red-500">*</span>
+                                        </label>
+                                        <input
+                                            type="text"
+                                            value={state.details.qualitative.focus}
+                                            onChange={(e) => updateDetail('qualitative', 'focus', e.target.value)}
+                                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-gray-900"
+                                        />
+                                        <p className="text-xs text-gray-500 mt-1">{t.helpers.focus}</p>
+                                    </div>
+                                </>
+                            )}
 
-                        {state.method === 'quantitative' && (
-                            <>
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                    <div className="space-y-2">
-                                        <label className="block text-sm font-medium text-gray-700">
-                                            {t.inputLabels.varX} <span className="text-gray-400 text-xs font-normal">(Optional)</span>
-                                        </label>
-                                        <input
-                                            type="text"
-                                            value={state.details.quantitative.varX}
-                                            onChange={(e) => updateDetail('quantitative', 'varX', e.target.value)}
-                                            placeholder={state.language === 'id' ? "(Biarkan kosong untuk saran AI)" : "(Leave empty for AI suggestion)"}
-                                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-gray-900"
-                                        />
-                                        <p className="text-xs text-gray-500 mt-1">{t.helpers.varX}</p>
+                            {state.method === 'quantitative' && (
+                                <>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                        <div className="space-y-2">
+                                            <label className="block text-sm font-medium text-gray-700">
+                                                {t.inputLabels.varX} <span className="text-gray-400 text-xs font-normal">(Optional)</span>
+                                            </label>
+                                            <input
+                                                type="text"
+                                                value={state.details.quantitative.varX}
+                                                onChange={(e) => updateDetail('quantitative', 'varX', e.target.value)}
+                                                placeholder={state.language === 'id' ? "(Biarkan kosong untuk saran AI)" : "(Leave empty for AI suggestion)"}
+                                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-gray-900"
+                                            />
+                                            <p className="text-xs text-gray-500 mt-1">{t.helpers.varX}</p>
+                                        </div>
+                                        <div className="space-y-2">
+                                            <label className="block text-sm font-medium text-gray-700">
+                                                {t.inputLabels.varY} <span className="text-gray-400 text-xs font-normal">(Optional)</span>
+                                            </label>
+                                            <input
+                                                type="text"
+                                                value={state.details.quantitative.varY}
+                                                onChange={(e) => updateDetail('quantitative', 'varY', e.target.value)}
+                                                placeholder={state.language === 'id' ? "(Biarkan kosong untuk saran AI)" : "(Leave empty for AI suggestion)"}
+                                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-gray-900"
+                                            />
+                                            <p className="text-xs text-gray-500 mt-1">{t.helpers.varY}</p>
+                                        </div>
+                                        <div className="space-y-2 md:col-span-2">
+                                            <label className="block text-sm font-medium text-gray-700">
+                                                {state.language === 'id' ? 'Variabel Z (Moderasi/Intervening)' : 'Variable Z (Moderating/Intervening)'} <span className="text-gray-400 text-xs font-normal">(Optional)</span>
+                                            </label>
+                                            <input
+                                                type="text"
+                                                value={state.details.quantitative.varZ}
+                                                onChange={(e) => updateDetail('quantitative', 'varZ', e.target.value)}
+                                                placeholder={state.language === 'id' ? 'Misal: Kepuasan Kerja, Budaya Organisasi' : 'e.g. Job Satisfaction, Org Culture'}
+                                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-gray-900"
+                                            />
+                                        </div>
                                     </div>
                                     <div className="space-y-2">
                                         <label className="block text-sm font-medium text-gray-700">
-                                            {t.inputLabels.varY} <span className="text-gray-400 text-xs font-normal">(Optional)</span>
+                                            {t.inputLabels.population} <span className="text-red-500">*</span>
                                         </label>
                                         <input
                                             type="text"
-                                            value={state.details.quantitative.varY}
-                                            onChange={(e) => updateDetail('quantitative', 'varY', e.target.value)}
-                                            placeholder={state.language === 'id' ? "(Biarkan kosong untuk saran AI)" : "(Leave empty for AI suggestion)"}
+                                            value={state.details.quantitative.population}
+                                            onChange={(e) => updateDetail('quantitative', 'population', e.target.value)}
                                             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-gray-900"
                                         />
-                                        <p className="text-xs text-gray-500 mt-1">{t.helpers.varY}</p>
+                                        <p className="text-xs text-gray-500 mt-1">{t.helpers.population}</p>
                                     </div>
-                                    <div className="space-y-2 md:col-span-2">
-                                        <label className="block text-sm font-medium text-gray-700">
-                                            {state.language === 'id' ? 'Variabel Z (Moderasi/Intervening)' : 'Variable Z (Moderating/Intervening)'} <span className="text-gray-400 text-xs font-normal">(Optional)</span>
-                                        </label>
-                                        <input
-                                            type="text"
-                                            value={state.details.quantitative.varZ}
-                                            onChange={(e) => updateDetail('quantitative', 'varZ', e.target.value)}
-                                            placeholder={state.language === 'id' ? 'Misal: Kepuasan Kerja, Budaya Organisasi' : 'e.g. Job Satisfaction, Org Culture'}
-                                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-gray-900"
-                                        />
-                                    </div>
-                                </div>
-                                <div className="space-y-2">
-                                    <label className="block text-sm font-medium text-gray-700">
-                                        {t.inputLabels.population} <span className="text-red-500">*</span>
-                                    </label>
-                                    <input
-                                        type="text"
-                                        value={state.details.quantitative.population}
-                                        onChange={(e) => updateDetail('quantitative', 'population', e.target.value)}
-                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-gray-900"
-                                    />
-                                    <p className="text-xs text-gray-500 mt-1">{t.helpers.population}</p>
-                                </div>
-                            </>
-                        )}
+                                </>
+                            )}
 
-                        {state.method === 'secondary' && (
-                            <>
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                    <div className="space-y-2">
-                                        <label className="block text-sm font-medium text-gray-700">
-                                            {t.inputLabels.varX} <span className="text-gray-400 text-xs font-normal">(Optional)</span>
-                                        </label>
-                                        <input
-                                            type="text"
-                                            value={state.details.secondary.varX}
-                                            onChange={(e) => updateDetail('secondary', 'varX', e.target.value)}
-                                            placeholder={state.language === 'id' ? "(Biarkan kosong untuk saran AI)" : "(Leave empty for AI suggestion)"}
-                                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-gray-900"
-                                        />
-                                        <p className="text-xs text-gray-500 mt-1">{state.language === 'id' ? 'Bisa lebih dari satu, pisahkan dengan koma' : 'Can be multiple, separate with comma'}</p>
+                            {state.method === 'secondary' && (
+                                <>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                        <div className="space-y-2">
+                                            <label className="block text-sm font-medium text-gray-700">
+                                                {t.inputLabels.varX} <span className="text-gray-400 text-xs font-normal">(Optional)</span>
+                                            </label>
+                                            <input
+                                                type="text"
+                                                value={state.details.secondary.varX}
+                                                onChange={(e) => updateDetail('secondary', 'varX', e.target.value)}
+                                                placeholder={state.language === 'id' ? "(Biarkan kosong untuk saran AI)" : "(Leave empty for AI suggestion)"}
+                                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-gray-900"
+                                            />
+                                            <p className="text-xs text-gray-500 mt-1">{state.language === 'id' ? 'Bisa lebih dari satu, pisahkan dengan koma' : 'Can be multiple, separate with comma'}</p>
+                                        </div>
+                                        <div className="space-y-2">
+                                            <label className="block text-sm font-medium text-gray-700">
+                                                {t.inputLabels.varY} <span className="text-gray-400 text-xs font-normal">(Optional)</span>
+                                            </label>
+                                            <input
+                                                type="text"
+                                                value={state.details.secondary.varY}
+                                                onChange={(e) => updateDetail('secondary', 'varY', e.target.value)}
+                                                placeholder={state.language === 'id' ? "(Biarkan kosong untuk saran AI)" : "(Leave empty for AI suggestion)"}
+                                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-gray-900"
+                                            />
+                                        </div>
+                                        <div className="space-y-2 md:col-span-2">
+                                            <label className="block text-sm font-medium text-gray-700">
+                                                {state.language === 'id' ? 'Variabel Z (Moderasi/Intervening)' : 'Variable Z (Moderating/Intervening)'} <span className="text-gray-400 text-xs font-normal">(Optional)</span>
+                                            </label>
+                                            <input
+                                                type="text"
+                                                value={state.details.secondary.varZ}
+                                                onChange={(e) => updateDetail('secondary', 'varZ', e.target.value)}
+                                                placeholder={state.language === 'id' ? 'Misal: Kebijakan Pemerintah, Teknologi' : 'e.g. Govt Policy, Technology'}
+                                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-gray-900"
+                                            />
+                                        </div>
                                     </div>
                                     <div className="space-y-2">
                                         <label className="block text-sm font-medium text-gray-700">
-                                            {t.inputLabels.varY} <span className="text-gray-400 text-xs font-normal">(Optional)</span>
+                                            {t.inputLabels.source} <span className="text-red-500">*</span>
                                         </label>
                                         <input
                                             type="text"
-                                            value={state.details.secondary.varY}
-                                            onChange={(e) => updateDetail('secondary', 'varY', e.target.value)}
-                                            placeholder={state.language === 'id' ? "(Biarkan kosong untuk saran AI)" : "(Leave empty for AI suggestion)"}
+                                            value={state.details.secondary.source}
+                                            onChange={(e) => updateDetail('secondary', 'source', e.target.value)}
+                                            placeholder={state.language === 'id' ? "Misal: BPS, Dinas Pertanian" : "e.g. Central Bureau of Statistics"}
                                             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-gray-900"
                                         />
+                                        <p className="text-xs text-gray-500 mt-1">{t.helpers.source}</p>
                                     </div>
-                                    <div className="space-y-2 md:col-span-2">
+                                    <div className="space-y-2">
                                         <label className="block text-sm font-medium text-gray-700">
-                                            {state.language === 'id' ? 'Variabel Z (Moderasi/Intervening)' : 'Variable Z (Moderating/Intervening)'} <span className="text-gray-400 text-xs font-normal">(Optional)</span>
+                                            {t.inputLabels.year} <span className="text-red-500">*</span>
                                         </label>
                                         <input
                                             type="text"
-                                            value={state.details.secondary.varZ}
-                                            onChange={(e) => updateDetail('secondary', 'varZ', e.target.value)}
-                                            placeholder={state.language === 'id' ? 'Misal: Kebijakan Pemerintah, Teknologi' : 'e.g. Govt Policy, Technology'}
+                                            value={state.details.secondary.population}
+                                            onChange={(e) => updateDetail('secondary', 'population', e.target.value)}
+                                            placeholder={state.language === 'id' ? "Misal: Lahan Sawah di Banyumas 2020-2024" : "e.g. Rice Fields in East Java 2020-2024"}
                                             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-gray-900"
                                         />
+                                        <p className="text-xs text-gray-500 mt-1">{t.helpers.year}</p>
                                     </div>
-                                </div>
-                                <div className="space-y-2">
-                                    <label className="block text-sm font-medium text-gray-700">
-                                        {t.inputLabels.source} <span className="text-red-500">*</span>
-                                    </label>
-                                    <input
-                                        type="text"
-                                        value={state.details.secondary.source}
-                                        onChange={(e) => updateDetail('secondary', 'source', e.target.value)}
-                                        placeholder={state.language === 'id' ? "Misal: BPS, Dinas Pertanian" : "e.g. Central Bureau of Statistics"}
-                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-gray-900"
-                                    />
-                                    <p className="text-xs text-gray-500 mt-1">{t.helpers.source}</p>
-                                </div>
-                                <div className="space-y-2">
-                                    <label className="block text-sm font-medium text-gray-700">
-                                        {t.inputLabels.year} <span className="text-red-500">*</span>
-                                    </label>
-                                    <input
-                                        type="text"
-                                        value={state.details.secondary.population}
-                                        onChange={(e) => updateDetail('secondary', 'population', e.target.value)}
-                                        placeholder={state.language === 'id' ? "Misal: Lahan Sawah di Banyumas 2020-2024" : "e.g. Rice Fields in East Java 2020-2024"}
-                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-gray-900"
-                                    />
-                                    <p className="text-xs text-gray-500 mt-1">{t.helpers.year}</p>
-                                </div>
-                            </>
-                        )}
-                    </div>
+                                </>
+                            )}
+                        </div>
+                    )}
                 </section>
 
                 {/* Actions */}
