@@ -80,6 +80,7 @@ export default function ResearchPromptArchitect() {
             customFieldLabel: 'Spesifikasikan Bidang Studi',
             customFieldPlaceholder: 'Contoh: Antropologi, Fisika Teoretis...',
             topicLabel: 'Topik Penelitian',
+            topicPlaceholder: 'Misal: Pemasaran Digital, Kinerja Karyawan, atau Dampak AI...',
             outputModeLabel: 'Tujuan Output',
             outputModes: {
                 brainstorming: 'Cari Ide / Brainstorming',
@@ -130,6 +131,7 @@ export default function ResearchPromptArchitect() {
             customFieldLabel: 'Specify Field of Study',
             customFieldPlaceholder: 'Example: Anthropology, Theoretical Physics...',
             topicLabel: 'Research Topic',
+            topicPlaceholder: 'e.g. Digital Marketing, Employee Performance, or AI Impact...',
             outputModeLabel: 'Output Goal',
             outputModes: {
                 brainstorming: 'Find Ideas / Brainstorming',
@@ -314,6 +316,7 @@ export default function ResearchPromptArchitect() {
                             type="text"
                             value={state.topic}
                             onChange={(e) => updateState('topic', e.target.value)}
+                            placeholder={t.topicPlaceholder}
                             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-gray-900"
                         />
                     </div>
