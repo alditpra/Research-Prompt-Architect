@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Research Prompt Architect",
-  description: "gimana gimana?",
+  description: "Dibuat pakai nextjs, typescript, tailwindcss",
 };
 
 export default function RootLayout({
