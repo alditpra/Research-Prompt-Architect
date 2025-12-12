@@ -83,7 +83,7 @@ export default function ResearchPromptArchitect() {
             outputModeLabel: 'Tujuan Output',
             outputModes: {
                 brainstorming: 'Cari Ide / Brainstorming',
-                proposal: 'Buat Proposal Lengkap'
+                proposal: 'Buat Outline Lengkap'
             },
             problemLabel: 'Latar Belakang Masalah (Gap Analysis)',
             problemIdealPlaceholder: 'Kondisi Ideal / Harapan (Das Sollen). Contoh: Target penjualan seharusnya naik 10%...',
@@ -133,7 +133,7 @@ export default function ResearchPromptArchitect() {
             outputModeLabel: 'Output Goal',
             outputModes: {
                 brainstorming: 'Find Ideas / Brainstorming',
-                proposal: 'Create Full Proposal'
+                proposal: 'Create Full Outline'
             },
             problemLabel: 'Background Problem (Gap Analysis)',
             problemIdealPlaceholder: 'Ideal Condition (Expectation). e.g. Sales reflected 10% growth...',
