@@ -191,10 +191,10 @@ export default function ResearchPromptArchitect() {
             return !!(state.details.qualitative.informant && state.details.qualitative.focus && state.subMethod && state.tool);
         }
         if (state.method === 'quantitative') {
-            return !!(state.details.quantitative.varX && state.details.quantitative.varY && state.details.quantitative.population && state.subMethod && state.tool);
+            return !!(state.details.quantitative.population && state.subMethod && state.tool);
         }
         if (state.method === 'secondary') {
-            return !!(state.details.secondary.source && state.details.secondary.population && state.details.secondary.varX && state.details.secondary.varY && state.subMethod && state.tool);
+            return !!(state.details.secondary.source && state.details.secondary.population && state.subMethod && state.tool);
         }
         return false;
     };
@@ -475,24 +475,26 @@ export default function ResearchPromptArchitect() {
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div className="space-y-2">
                                         <label className="block text-sm font-medium text-gray-700">
-                                            {t.inputLabels.varX} <span className="text-red-500">*</span>
+                                            {t.inputLabels.varX} <span className="text-gray-400 text-xs font-normal">(Optional)</span>
                                         </label>
                                         <input
                                             type="text"
                                             value={state.details.quantitative.varX}
                                             onChange={(e) => updateDetail('quantitative', 'varX', e.target.value)}
+                                            placeholder={state.language === 'id' ? "(Biarkan kosong untuk saran AI)" : "(Leave empty for AI suggestion)"}
                                             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-gray-900"
                                         />
                                         <p className="text-xs text-gray-500 mt-1">{t.helpers.varX}</p>
                                     </div>
                                     <div className="space-y-2">
                                         <label className="block text-sm font-medium text-gray-700">
-                                            {t.inputLabels.varY} <span className="text-red-500">*</span>
+                                            {t.inputLabels.varY} <span className="text-gray-400 text-xs font-normal">(Optional)</span>
                                         </label>
                                         <input
                                             type="text"
                                             value={state.details.quantitative.varY}
                                             onChange={(e) => updateDetail('quantitative', 'varY', e.target.value)}
+                                            placeholder={state.language === 'id' ? "(Biarkan kosong untuk saran AI)" : "(Leave empty for AI suggestion)"}
                                             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-gray-900"
                                         />
                                         <p className="text-xs text-gray-500 mt-1">{t.helpers.varY}</p>
@@ -530,26 +532,26 @@ export default function ResearchPromptArchitect() {
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div className="space-y-2">
                                         <label className="block text-sm font-medium text-gray-700">
-                                            {t.inputLabels.varX} <span className="text-red-500">*</span>
+                                            {t.inputLabels.varX} <span className="text-gray-400 text-xs font-normal">(Optional)</span>
                                         </label>
                                         <input
                                             type="text"
                                             value={state.details.secondary.varX}
                                             onChange={(e) => updateDetail('secondary', 'varX', e.target.value)}
-                                            placeholder={state.language === 'id' ? "Misal: Curah Hujan, Penggunaan Pupuk (Pisahkan koma)" : "e.g. Rainfall, Fertilizer Use"}
+                                            placeholder={state.language === 'id' ? "(Biarkan kosong untuk saran AI)" : "(Leave empty for AI suggestion)"}
                                             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-gray-900"
                                         />
                                         <p className="text-xs text-gray-500 mt-1">{state.language === 'id' ? 'Bisa lebih dari satu, pisahkan dengan koma' : 'Can be multiple, separate with comma'}</p>
                                     </div>
                                     <div className="space-y-2">
                                         <label className="block text-sm font-medium text-gray-700">
-                                            {t.inputLabels.varY} <span className="text-red-500">*</span>
+                                            {t.inputLabels.varY} <span className="text-gray-400 text-xs font-normal">(Optional)</span>
                                         </label>
                                         <input
                                             type="text"
                                             value={state.details.secondary.varY}
                                             onChange={(e) => updateDetail('secondary', 'varY', e.target.value)}
-                                            placeholder={state.language === 'id' ? "Misal: Hasil Panen Padi" : "e.g. Rice Yield"}
+                                            placeholder={state.language === 'id' ? "(Biarkan kosong untuk saran AI)" : "(Leave empty for AI suggestion)"}
                                             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-gray-900"
                                         />
                                     </div>

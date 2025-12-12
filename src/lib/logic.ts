@@ -33,8 +33,11 @@ export function formatDetailsForPrompt(method: string, details: AppState['detail
     return Object.keys(methodDetails)
         .map(key => {
             const label = methodLabels[key as keyof typeof methodLabels];
-            const value = methodDetails[key as keyof typeof methodDetails];
-            return `- ${label}: ${sanitizeInput(value)}`;
+            const value = methodDetails[key as keyof typeof methodDetails] as string;
+            const displayValue = value.trim()
+                ? sanitizeInput(value)
+                : (language === 'id' ? '(Mohon berikan saran opsi yang relevan dari Teori)' : '(Please suggest relevant options based on Theory)');
+            return `- ${label}: ${displayValue}`;
         })
         .join('\n');
 }
