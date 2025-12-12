@@ -584,7 +584,7 @@ export default function ResearchPromptArchitect() {
                                         type="text"
                                         value={state.details.secondary.population}
                                         onChange={(e) => updateDetail('secondary', 'population', e.target.value)}
-                                        placeholder={state.language === 'id' ? "Misal: Lahan Sawah di Jawa Timur 2020-2024" : "e.g. Rice Fields in East Java 2020-2024"}
+                                        placeholder={state.language === 'id' ? "Misal: Lahan Sawah di Banyumas 2020-2024" : "e.g. Rice Fields in East Java 2020-2024"}
                                         className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-gray-900"
                                     />
                                     <p className="text-xs text-gray-500 mt-1">{t.helpers.year}</p>
