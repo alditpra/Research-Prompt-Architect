@@ -130,14 +130,12 @@ ${colInfo}
 - PRIORITAS METODE STATE-OF-THE-ART: Gunakan pendekatan terbaru dan algoritma mutakhir.
 - CODING DIPERBOLEHKAN: Boleh rekomendasikan R, Python (sklearn, statsmodels, TensorFlow, dll) jika lebih powerful.
 - TEKNIK ANALISIS KOMPLEKS: Machine Learning, Deep Learning, SEM dengan bootstrap, Bayesian analysis, Network Analysis, dll.
-- PRIORITASKAN KEBARUAN: Jangan gunakan metode konvensional jika ada alternatif yang lebih tajam dan inovatif.
-- CONTOH METODE ADVANCED: Random Forest, XGBoost, Neural Networks, ARIMA-GARCH, VAR/VECM advanced, Structural Topic Modeling, dsb.`
+- PRIORITASKAN KEBARUAN: Jangan gunakan metode konvensional jika ada alternatif yang lebih tajam dan inovatif.`
             : `NOVELTY INSTRUCTIONS (ADVANCED):
 - PRIORITIZE STATE-OF-THE-ART METHODS: Use latest approaches and cutting-edge algorithms.
 - CODING ALLOWED: May recommend R, Python (sklearn, statsmodels, TensorFlow, etc.) if more powerful.
 - COMPLEX ANALYSIS TECHNIQUES: Machine Learning, Deep Learning, SEM with bootstrap, Bayesian analysis, Network Analysis, etc.
-- PRIORITIZE NOVELTY: Avoid conventional methods if sharper and more innovative alternatives exist.
-- EXAMPLE ADVANCED METHODS: Random Forest, XGBoost, Neural Networks, ARIMA-GARCH, advanced VAR/VECM, Structural Topic Modeling, etc.`;
+- PRIORITIZE NOVELTY: Avoid conventional methods if sharper and more innovative alternatives exist.`;
     } else {
         noveltyInstructions = language === 'id'
             ? `INSTRUKSI NOVELTY (STANDAR/TRADISIONAL):
