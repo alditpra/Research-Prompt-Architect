@@ -126,24 +126,34 @@ ${colInfo}
     let noveltyInstructions = '';
     if (noveltyMode === 'advanced') {
         noveltyInstructions = language === 'id'
-            ? `INSTRUKSI NOVELTY (MUTAKHIR/ADVANCED): 
-- Prioritaskan pendekatan state-of-the-art atau algoritma terbaru.
-- Jangan gunakan pendekatan standar yang terlalu umum jika ada alternatif yang lebih tajam.
-- Tekankan aspek kebaruan/gap yang unik.`
+            ? `INSTRUKSI NOVELTY (MUTAKHIR/ADVANCED):
+- PRIORITAS METODE STATE-OF-THE-ART: Gunakan pendekatan terbaru dan algoritma mutakhir.
+- CODING DIPERBOLEHKAN: Boleh rekomendasikan R, Python (sklearn, statsmodels, TensorFlow, dll) jika lebih powerful.
+- TEKNIK ANALISIS KOMPLEKS: Machine Learning, Deep Learning, SEM dengan bootstrap, Bayesian analysis, Network Analysis, dll.
+- PRIORITASKAN KEBARUAN: Jangan gunakan metode konvensional jika ada alternatif yang lebih tajam dan inovatif.
+- CONTOH METODE ADVANCED: Random Forest, XGBoost, Neural Networks, ARIMA-GARCH, VAR/VECM advanced, Structural Topic Modeling, dsb.`
             : `NOVELTY INSTRUCTIONS (ADVANCED):
-- Prioritize state-of-the-art approaches or recent algorithms.
-- Avoid standard/generic approaches if sharper alternatives exist.
-- Emphasize unique novelty/gap.`;
+- PRIORITIZE STATE-OF-THE-ART METHODS: Use latest approaches and cutting-edge algorithms.
+- CODING ALLOWED: May recommend R, Python (sklearn, statsmodels, TensorFlow, etc.) if more powerful.
+- COMPLEX ANALYSIS TECHNIQUES: Machine Learning, Deep Learning, SEM with bootstrap, Bayesian analysis, Network Analysis, etc.
+- PRIORITIZE NOVELTY: Avoid conventional methods if sharper and more innovative alternatives exist.
+- EXAMPLE ADVANCED METHODS: Random Forest, XGBoost, Neural Networks, ARIMA-GARCH, advanced VAR/VECM, Structural Topic Modeling, etc.`;
     } else {
         noveltyInstructions = language === 'id'
-            ? `INSTRUKSI NOVELTY (STANDAR/TRADISIONAL): 
-- Gunakan pendekatan yang sudah mapan dan teruji (High Reliability).
-- Hindari metode yang memerlukan pemrograman.
-- fokus pada penggunaan software statistik gui seperti spss, amos, smartpls, eviews, dsb.`
+            ? `INSTRUKSI NOVELTY (STANDAR/TRADISIONAL):
+- PRIORITAS SOFTWARE GUI: WAJIB gunakan software statistik berbasis GUI seperti SPSS, AMOS, SmartPLS, EViews, Stata (GUI), LISREL, atau WarpPLS.
+- TANPA CODING: DILARANG merekomendasikan metode yang memerlukan pemrograman (R, Python, dsb). User tidak memiliki kemampuan coding.
+- METODE SEDERHANA & TERUJI: Gunakan teknik analisis klasik yang sudah mapan: Regresi Linear/Logistik, Uji t/ANOVA, Chi-Square, Korelasi Pearson/Spearman, PLS-SEM (SmartPLS), CB-SEM (AMOS).
+- HINDARI METODE KOMPLEKS: Jangan rekomendasikan Machine Learning, Deep Learning, Bayesian, atau teknik yang tidak ada di software GUI standar.
+- FOKUS REPLIKABILITAS: Pilih metode yang mudah direplikasi oleh peneliti pemula dengan software point-and-click.
+- CONTOH METODE STANDAR: Regresi berganda (SPSS), Path Analysis (AMOS), PLS-SEM (SmartPLS), Uji beda (SPSS), Time Series sederhana (EViews).`
             : `NOVELTY INSTRUCTIONS (STANDARD/TRADITIONAL):
-- Use established, time-tested approaches (High Reliability).
-- Avoid methods that require programming.
-- Focus on the use of GUI-based statistical software such as SPSS, AMOS, SmartPLS, EViews, and similar tools.`;
+- PRIORITIZE GUI SOFTWARE: MUST use GUI-based statistical software like SPSS, AMOS, SmartPLS, EViews, Stata (GUI), LISREL, or WarpPLS.
+- NO CODING: DO NOT recommend methods requiring programming (R, Python, etc). User has no coding ability.
+- SIMPLE & PROVEN METHODS: Use classic, established analysis techniques: Linear/Logistic Regression, t-test/ANOVA, Chi-Square, Pearson/Spearman Correlation, PLS-SEM (SmartPLS), CB-SEM (AMOS).
+- AVOID COMPLEX METHODS: Do not recommend Machine Learning, Deep Learning, Bayesian, or techniques not available in standard GUI software.
+- FOCUS REPLICABILITY: Choose methods easily replicable by beginner researchers with point-and-click software.
+- EXAMPLE STANDARD METHODS: Multiple regression (SPSS), Path Analysis (AMOS), PLS-SEM (SmartPLS), Difference tests (SPSS), Simple Time Series (EViews).`;
     }
 
     // Format Problem / Gap

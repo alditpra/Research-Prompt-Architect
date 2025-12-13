@@ -112,6 +112,7 @@ export default function ResearchPromptArchitect() {
             setState(prev => ({
                 ...prev,
                 [key]: value,
+                subMethod: 'Saran AI', // Auto-select AI Design
                 tool: 'Saran AI', // Auto-select AI Tool
                 customTool: ''
             }));
@@ -575,30 +576,38 @@ export default function ResearchPromptArchitect() {
                                 {state.language === 'id' ? 'Desain Spesifik' : 'Specific Design'} <span className="text-red-500">*</span>
                             </label>
                             <select
-                                value={state.subMethod}
+                                value={state.noveltyMode === 'advanced' ? 'Saran AI' : state.subMethod}
                                 onChange={(e) => updateState('subMethod', e.target.value)}
-                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white text-gray-900"
+                                disabled={state.noveltyMode === 'advanced'}
+                                className={`w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white text-gray-900 ${state.noveltyMode === 'advanced' ? 'bg-gray-100 cursor-not-allowed opacity-70' : ''}`}
                             >
                                 <option value="">{state.language === 'id' ? 'Pilih Desain...' : 'Select Design...'}</option>
                                 {SUB_METHODS[state.method][state.language].map((m: string) => (
                                     <option key={m} value={m}>{m}</option>
                                 ))}
                             </select>
+                            {state.noveltyMode === 'advanced' && (
+                                <p className="text-xs text-purple-600">🔒 {state.language === 'id' ? 'Otomatis: Saran AI (Mode Mutakhir)' : 'Auto: AI Recommendation (Advanced Mode)'}</p>
+                            )}
                         </div>
                         <div className="space-y-2">
                             <label className="block text-sm font-medium text-gray-700">
                                 {state.language === 'id' ? 'Alat Analisis' : 'Analysis Tool'} <span className="text-red-500">*</span>
                             </label>
                             <select
-                                value={state.tool}
+                                value={state.noveltyMode === 'advanced' ? 'Saran AI' : state.tool}
                                 onChange={(e) => updateState('tool', e.target.value)}
-                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white text-gray-900"
+                                disabled={state.noveltyMode === 'advanced'}
+                                className={`w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white text-gray-900 ${state.noveltyMode === 'advanced' ? 'bg-gray-100 cursor-not-allowed opacity-70' : ''}`}
                             >
                                 <option value="">{state.language === 'id' ? 'Pilih Software...' : 'Select Software...'}</option>
                                 {ANALYSIS_TOOLS[state.method].map((t: string) => (
                                     <option key={t} value={t}>{t}</option>
                                 ))}
                             </select>
+                            {state.noveltyMode === 'advanced' && (
+                                <p className="text-xs text-purple-600">🔒 {state.language === 'id' ? 'Otomatis: Saran AI (Mode Mutakhir)' : 'Auto: AI Recommendation (Advanced Mode)'}</p>
+                            )}
                         </div>
 
                         {state.tool === 'Lainnya' && (
@@ -638,8 +647,8 @@ export default function ResearchPromptArchitect() {
                                 </div>
                                 <p className="text-xs text-gray-500 leading-relaxed">
                                     {state.language === 'id'
-                                        ? 'Prioritas metode traditional, mapan & teruji. (Tanpa Coding)'
-                                        : 'Prioritizes established methods.'}
+                                        ? 'Prioritas metode mapan & teruji. (Tanpa Coding)'
+                                        : 'Prioritizes established methods. (No Coding)'}
                                 </p>
                             </button>
 
