@@ -638,7 +638,7 @@ export default function ResearchPromptArchitect() {
                                 </div>
                                 <p className="text-xs text-gray-500 leading-relaxed">
                                     {state.language === 'id'
-                                        ? 'Prioritas metode mapan & teruji.'
+                                        ? 'Prioritas metode mapan & teruji. Tanpa Coding'
                                         : 'Prioritizes established methods.'}
                                 </p>
                             </button>
