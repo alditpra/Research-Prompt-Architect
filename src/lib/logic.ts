@@ -191,7 +191,7 @@ Berikan 5 OPSI IDE PENELITIAN yang potensial. Untuk setiap opsi, jelaskan:
 2. Research Gap: Kenapa ini penting diteliti? (Hubungkan dengan gap Ideal vs Aktual jika ada).
 3. Kebaruan (Novelty): Apa bedanya dengan riset lain?
 4. Validasi Metode & Alat: Apakah metode ${fullMethodLabel} dan alat ${finalTool} cocok untuk ide ini?
-5. Tingkat Kesulitan & Risiko: Estimasi waktu dan potensi kendala data.
+5. Tingkat Kesulitan & Risiko: Estimasi tantangan dan potensi kendala data.
 
 Gaya Bahasa: Santai tapi berbobot, memotivasi, dan inspiratif.`;
         } else {
@@ -215,7 +215,7 @@ Provide 5 POTENTIAL RESEARCH IDEAS. For each option, explain:
 2. Research Gap: Why is this important? (Connect with Ideal vs Actual gap if provided).
 3. Novelty: What differentiates this from other research?
 4. Method & Tool Validation: Is ${fullMethodLabel} and tool ${finalTool} suitable for this idea?
-5. Difficulty & Risk: Time estimation and potential data hurdles.
+5. Difficulty & Risk: challange and potential data hurdles.
 
 Tone: Casual but insightful, motivating, and inspiring.`;
         }
