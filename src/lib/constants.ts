@@ -61,21 +61,21 @@ export const METHOD_SPECIFIC_TASKS = {
 
 export const SUB_METHODS = {
     qualitative: {
-        id: ['Saran AI (Analisis Otomatis)', 'Studi Kasus', 'Fenomenologi', 'Etnografi', 'Studi Pustaka (Systematic Review)'],
-        en: ['AI Recommendation (Auto-Analysis)', 'Case Study', 'Phenomenology', 'Ethnography', 'Literature Review']
+        id: ['Saran AI (Analisis Otomatis)', 'Studi Kasus', 'Fenomenologi', 'Etnografi', 'Studi Pustaka (Systematic Review)', 'Netnografi', 'Analisis Teks / NLP'],
+        en: ['AI Recommendation (Auto-Analysis)', 'Case Study', 'Phenomenology', 'Ethnography', 'Literature Review', 'Netnography', 'Text Analysis / NLP']
     },
     quantitative: {
-        id: ['Saran AI (Analisis Otomatis)', 'Korelasional', 'Komparatif', 'Eksperimen', 'Deskriptif'],
-        en: ['AI Recommendation (Auto-Analysis)', 'Correlational', 'Comparative', 'Experimental', 'Descriptive']
+        id: ['Saran AI (Analisis Otomatis)', 'Korelasional', 'Komparatif', 'Eksperimen', 'Deskriptif', 'Machine Learning / Predictive', 'R&D (Research & Development)'],
+        en: ['AI Recommendation (Auto-Analysis)', 'Correlational', 'Comparative', 'Experimental', 'Descriptive', 'Machine Learning / Predictive', 'R&D (Research & Development)']
     },
     secondary: {
-        id: ['Saran AI (Analisis Otomatis)', 'Regresi Data Panel', 'Time Series', 'Korelasional', 'Path Analysis'],
-        en: ['AI Recommendation (Auto-Analysis)', 'Panel Data Regression', 'Time Series', 'Correlational', 'Path Analysis']
+        id: ['Saran AI (Analisis Otomatis)', 'Regresi Data Panel', 'Time Series', 'Korelasional', 'Path Analysis', 'Machine Learning / Predictive', 'Scientometrics / Bibliometrics'],
+        en: ['AI Recommendation (Auto-Analysis)', 'Panel Data Regression', 'Time Series', 'Correlational', 'Path Analysis', 'Machine Learning / Predictive', 'Scientometrics / Bibliometrics']
     }
 };
 
 export const ANALYSIS_TOOLS = {
-    qualitative: ['NVivo', 'Atlas.ti', 'Manual Coding', 'MAXQDA', 'Lainnya'],
-    quantitative: ['SPSS', 'SmartPLS (SEM)', 'R Studio', 'Python', 'Stata', 'Lainnya'],
-    secondary: ['EViews', 'Stata', 'SPSS', 'Python', 'R Studio', 'Lainnya']
+    qualitative: ['Saran AI', 'NVivo', 'Atlas.ti', 'Manual Coding', 'MAXQDA', 'Lainnya'],
+    quantitative: ['Saran AI', 'SPSS', 'SmartPLS (SEM)', 'R Studio', 'Python', 'Stata', 'Lainnya'],
+    secondary: ['Saran AI', 'EViews', 'Stata', 'SPSS', 'Python', 'R Studio', 'Lainnya']
 };

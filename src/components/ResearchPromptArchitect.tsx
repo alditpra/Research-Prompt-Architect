@@ -104,8 +104,31 @@ export default function ResearchPromptArchitect() {
         }
     }, [state]);
 
-    const updateState = <K extends keyof AppState>(key: K, value: AppState[K]) => {
-        setState(prev => ({ ...prev, [key]: value }));
+    // Unified State Updater
+    const updateState = (key: string, value: any) => {
+        // Handle side-effects for Novelty Mode
+        if (key === 'noveltyMode' && value === 'advanced') {
+            setState(prev => ({
+                ...prev,
+                [key]: value,
+                tool: 'Saran AI', // Auto-select AI Tool
+                customTool: ''
+            }));
+            return;
+        }
+
+        if (key.includes('.')) {
+            const [parent, child] = key.split('.');
+            setState((prev) => ({
+                ...prev,
+                [parent]: {
+                    ...prev[parent as keyof AppState] as any,
+                    [child]: value
+                }
+            }));
+        } else {
+            setState((prev) => ({ ...prev, [key]: value }));
+        }
     };
 
     const updateDetail = (method: MethodType, field: string, value: string) => {
@@ -850,6 +873,52 @@ export default function ResearchPromptArchitect() {
                     </section>
                 )}
             </main>
+
+            {/* Collaboration Footer */}
+            <footer className="mt-12 border-t border-gray-200 bg-gradient-to-br from-indigo-50 to-blue-50">
+                <div className="max-w-4xl mx-auto px-6 py-12">
+                    <div className="bg-white rounded-2xl p-8 shadow-sm border border-indigo-100 flex flex-col md:flex-row items-center gap-8">
+                        {/* Avatar / Icon */}
+                        <div className="flex-shrink-0">
+                            <div className="w-20 h-20 bg-indigo-100 rounded-full flex items-center justify-center text-3xl shadow-inner text-indigo-600">
+                                🤝
+                            </div>
+                        </div>
+
+                        {/* Text Content */}
+                        <div className="flex-grow text-center md:text-left space-y-3">
+                            <h3 className="text-xl font-bold text-indigo-900">
+                                {state.language === 'id' ? 'Tawaran Kolaborasi Riset (Gratis)' : 'Open Collaboration Opportunity (Free)'}
+                            </h3>
+                            <p className="text-gray-600 text-sm leading-relaxed">
+                                {state.language === 'id'
+                                    ? 'Stuck dengan data yang rumit? Saya akan kerjakan bagian Analisis Data, Coding, Visualisasi, & Interpretasi (Bab Metodologi & Hasil) secara GRATIS. Timbal balik: Jadikan saya Penulis Kedua (2nd Author). Anda urus teori, penulisan naskah, submit & biaya.'
+                                    : 'Stuck with complex data? I will handle Data Analysis, Coding, Visualization, & Interpretation (Method & Result Chapters) for FREE. In exchange: 2nd Authorship. You handle Theory, Writing, Submission & Fees.'}
+                            </p>
+
+                            <div className="flex flex-wrap items-center justify-center md:justify-start gap-3 pt-2">
+                                <a
+                                    href="mailto:alditpra@gmail.com"
+                                    className="inline-flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-indigo-600 transition-colors"
+                                >
+                                    📧 alditpra@gmail.com
+                                </a>
+                                <a
+                                    href="https://wa.me/628158141112"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="inline-flex items-center gap-2 px-4 py-2 bg-green-500 rounded-lg text-sm font-medium text-white hover:bg-green-600 shadow-sm transition-all hover:shadow-green-200"
+                                >
+                                    💬 WhatsApp Me
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="text-center mt-8 text-gray-400 text-xs">
+                        &copy; 2025 Research Prompt Architect by alditpra. All rights reserved.
+                    </div>
+                </div>
+            </footer>
         </div>
     );
 }

@@ -249,8 +249,10 @@ TUGAS ANDA:
 Buatkan outline proposal penelitian (Bab 1-3) yang mencakup:
 
 0. CEK VALIDITAS DATA (PENTING):
-   - Review "Table Structure Snippet" di atas. Apakah tipe data (Numerik/Kategorial) memadai untuk dianalisis menggunakan ${finalTool}?
-   - KOMPATIBILITAS ALAT (WAJIB): Pastikan semua algoritma/uji statistik yang disarankan BISA DIKERJAKAN di ${finalTool}. Jangan menyarankan fitur yang tidak ada di software tersebut.
+   - Review "Table Structure Snippet" di atas. Apakah tipe data (Numerik/Kategorial) memadai untuk dianalisis?
+   - ${finalTool === 'Saran AI'
+                ? 'REKOMENDASI ALAT (WAJIB): Berdasarkan struktur data & target Novelty, REKOMENDASIKAN software yang paling tepat (misal: Python/R/SmartPLS).'
+                : `KOMPATIBILITAS ALAT (WAJIB): Pastikan semua algoritma/uji statistik yang disarankan BISA DIKERJAKAN di ${finalTool}. Jangan menyarankan fitur yang tidak ada di software tersebut.`}
    - Jika ada ketidakcocokan (misal: Regresi Linear pada data teks), berikan PERINGATAN KERAS di awal output.
 
 1. Judul Penelitian: Buatkan judul yang akademis, spesifik, dan menarik (maksimal 20 kata). Hindari judul klise.
@@ -262,7 +264,11 @@ Buatkan outline proposal penelitian (Bab 1-3) yang mencakup:
 3. Detail Metodologi (Sangat Penting):
    - ${isAiMethod ? 'Tentukan desain spesifik dan jelaskan alasannya.' : `Jelaskan alasan pemilihan desain ${subMethod} untuk topik ini.`}
    - TABEL DEFINISI OPERASIONAL: Buat tabel yang memetakan [Nama Variabel] -> [Kolom di Dataset] -> [Skala Data (Nominal/Ordinal/Rasio)] -> [Indikator/Teori Referensi].
-   - Buatkan langkah operasional penggunaan ${finalTool} untuk analisis data.
+   - ${isAiMethod ? 'Tentukan desain spesifik dan jelaskan alasannya.' : `Jelaskan alasan pemilihan desain ${subMethod} untuk topik ini.`}
+   - TABEL DEFINISI OPERASIONAL: Buat tabel yang memetakan [Nama Variabel] -> [Kolom di Dataset] -> [Skala Data (Nominal/Ordinal/Rasio)] -> [Indikator/Teori Referensi].
+   - ${finalTool === 'Saran AI'
+                ? 'Jelaskan alasan kenapa Software yang Anda rekomendasikan tadi adalah pilihan terbaik.'
+                : `Buatkan langkah operasional penggunaan ${finalTool} untuk analisis data.`}
 ${methodTasks}
 
 4. Hipotesis/Proposisi (Jika Ada): ${method !== 'qualitative' ? 'Rumuskan hipotesis logis.' : 'Rumuskan proposisi penelitian.'}
@@ -298,8 +304,10 @@ YOUR TASK:
 Create a comprehensive research proposal outline (Chapters 1-3) including:
 
 0. DATA FEASIBILITY CHECK (CRITICAL):
-   - Review the "Table Structure Snippet" above. Are the data types (Numeric/Categorical) suitable for analysis using ${finalTool}?
-   - TOOL COMPATIBILITY (MANDATORY): Ensure all suggested algorithms/statistical tests CAN BE EXECUTED in ${finalTool}. Do not suggest features unavailable in this software.
+   - Review the "Table Structure Snippet" above. Are the data types (Numeric/Categorical) suitable for analysis?
+   - ${finalTool === 'Saran AI'
+                ? 'TOOL RECOMMENDATION (MANDATORY): Based on the data structure and High Novelty requirement, RECOMMEND the most advanced/suitable software (e.g. Python/R/SmartPLS).'
+                : `TOOL COMPATIBILITY (MANDATORY): Ensure all suggested algorithms/statistical tests CAN BE EXECUTED in ${finalTool}. Do not suggest features unavailable in this software.`}
    - If there is a mismatch (e.g., Linear Regression on text data), provide a STRONG WARNING at the beginning.
 
 1. Research Title: Create an academic, specific, and engaging title (maximum 20 words). Avoid cliches.
@@ -311,7 +319,11 @@ Create a comprehensive research proposal outline (Chapters 1-3) including:
 3. Methodological Details (Crucial):
    - ${isAiMethod ? 'Determine the specific design and justify the choice.' : `Justify the choice of ${subMethod} design for this topic.`}
    - OPERATIONAL DEFINITION TABLE: Create a table mapping [Variable Name] -> [Dataset Column] -> [Data Scale (Nominal/Ordinal/Ratio)] -> [Indicator/Theoretical Reference].
-   - Outline operational steps for using ${finalTool} for data analysis.
+   - ${isAiMethod ? 'Determine the specific design and justify the choice.' : `Justify the choice of ${subMethod} design for this topic.`}
+   - OPERATIONAL DEFINITION TABLE: Create a table mapping [Variable Name] -> [Dataset Column] -> [Data Scale (Nominal/Ordinal/Ratio)] -> [Indicator/Theoretical Reference].
+   - ${finalTool === 'Saran AI'
+                ? 'Explain why the Software you recommended is the best choice (justify vs others).'
+                : `Outline operational steps for using ${finalTool} for data analysis.`}
 ${methodTasks}
 
 4. Hypotheses/Propositions (If applicable): ${method !== 'qualitative' ? 'Formulate logical hypotheses.' : 'Formulate research propositions.'}
