@@ -423,7 +423,7 @@ export default function ResearchPromptArchitect() {
                                 📊
                             </div>
                             <h2 className="font-semibold text-gray-800">
-                                {state.language === 'id' ? 'Data Sumber (Opsional misal data BPS)' : 'Data Source (Optional)'}
+                                {state.language === 'id' ? 'Data Sumber (Opsional misal data survei atau BPS)' : 'Data Source (Optional)'}
                             </h2>
                         </div>
 
