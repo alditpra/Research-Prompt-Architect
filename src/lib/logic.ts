@@ -82,13 +82,13 @@ export function generatePrompt(state: AppState): string {
         const content = uploadedFiles.map(file => {
             return `File: ${file.fileName}\n` + file.sheets.map(sheet => {
                 const colInfo = sheet.columns.slice(0, 15).map(c => `   - ${c.name} [${c.type}]`).join('\n');
-                // Format raw preview as JSON-like structure for clarity
-                const rawStructure = JSON.stringify(sheet.rawPreview);
+                const limitedPreview = sheet.rawPreview.map(row => Array.isArray(row) ? row.slice(0, 5) : row);
+                const rawStructure = JSON.stringify(limitedPreview) + (sheet.columns.length > 5 ? ' ... (more columns)' : '');
 
                 return `  Sheet: ${sheet.sheetName} (${sheet.rowCount} rows)
   Variables Detected:
 ${colInfo}
-  Table Structure Snippet (Top 8 rows):
+  Table Structure Snippet (Top 8 rows, first 5 cols):
   ${rawStructure}`;
             }).join('\n\n');
         }).join('\n\n' + '='.repeat(20) + '\n');
@@ -215,7 +215,7 @@ Provide 5 POTENTIAL RESEARCH IDEAS. For each option, explain:
 2. Research Gap: Why is this important? (Connect with Ideal vs Actual gap if provided).
 3. Novelty: What differentiates this from other research?
 4. Method & Tool Validation: Is ${fullMethodLabel} and tool ${finalTool} suitable for this idea?
-5. Difficulty & Risk: challange and potential data hurdles.
+5. Difficulty & Risk: Challenge and potential data hurdles.
 
 Tone: Casual but insightful, motivating, and inspiring.`;
         }
@@ -257,6 +257,7 @@ Buatkan outline proposal penelitian (Bab 1-3) yang mencakup:
 
 0. CEK VALIDITAS DATA & ALAT (CRITICAL):
    - Review "Table Structure Snippet". Apakah tipe data memadai?
+   - Identifikasi SKALA DATA setiap kolom dari preview (Nominal/Ordinal/Interval/Rasio).
    - ${finalTool === 'Saran AI'
                 ? 'REKOMENDASI ALAT: Pilih software yang PALING EFISIEN. Jika butuh koding (R/Python), sebutkan nama library spesifiknya.'
                 : `KOMPATIBILITAS ALAT (STRICT): Pastikan fitur yang disarankan BENAR-BENAR ADA di ${finalTool} versi standar. JANGAN berhalusinasi tentang fitur yang tidak ada.`}
@@ -317,6 +318,7 @@ Create a comprehensive research proposal outline (Chapters 1-3) including:
 
 0. DATA & TOOL FEASIBILITY CHECK (CRITICAL):
    - Review "Table Structure Snippet". Are data types suitable?
+   - Identify DATA SCALE of each column from preview (Nominal/Ordinal/Interval/Ratio).
    - ${finalTool === 'Saran AI'
                 ? 'TOOL RECOMMENDATION: Select the most EFFICIENT software. If code is needed (R/Python), SPECIFY LIBRARIES.'
                 : `TOOL COMPATIBILITY (STRICT): Ensure suggested features REALLY EXIST in ${finalTool} standard version. DO NOT hallucinate nonexistent plugins.`}
