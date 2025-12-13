@@ -224,7 +224,8 @@ Tone: Casual but insightful, motivating, and inspiring.`;
     // --- PROPOSAL MODE ---
     // Build template based on language
     if (language === 'id') {
-        return `Bertindaklah sebagai Pakar Akademis di bidang ${finalField} dengan spesialisasi metodologi ${fullMethodLabel}.
+        return `Bertindaklah sebagai "Strict Methodologist Reviewer" (Dosen Metodologi yang Kritis) di bidang ${finalField}.
+        Jangan bertele-tele. Fokus pada akurasi metodologis.
 
 Saya sedang menyusun PROPOSAL PENELITIAN LENGKAP dengan detail berikut:
 
@@ -245,15 +246,21 @@ ${detailsFormatted}
 
 ${styleGuide}
 
+INSTRUKSI PROSES BERPIKIR (Chain-of-Thought):
+Sebelum menulis output final, lakukan proses berpikir mendalam dalam blok \`[THOUGHT_PROCESS]\`:
+1. Analisis kesesuaian antara Masalah (${sanitizeInput(problem.actual)}) dengan Metode ${fullMethodLabel}.
+2. Apakah variabel yang tersedia cukup untuk menjawab rumusan masalah?
+3. Kritik apakah gap penelitian cukup kuat?
+
 TUGAS ANDA:
 Buatkan outline proposal penelitian (Bab 1-3) yang mencakup:
 
-0. CEK VALIDITAS DATA (PENTING):
-   - Review "Table Structure Snippet" di atas. Apakah tipe data (Numerik/Kategorial) memadai untuk dianalisis?
+0. CEK VALIDITAS DATA & ALAT (CRITICAL):
+   - Review "Table Structure Snippet". Apakah tipe data memadai?
    - ${finalTool === 'Saran AI'
-                ? 'REKOMENDASI ALAT (WAJIB): Berdasarkan struktur data & target Novelty, REKOMENDASIKAN software yang paling tepat (misal: Python/R/SmartPLS).'
-                : `KOMPATIBILITAS ALAT (WAJIB): Pastikan semua algoritma/uji statistik yang disarankan BISA DIKERJAKAN di ${finalTool}. Jangan menyarankan fitur yang tidak ada di software tersebut.`}
-   - Jika ada ketidakcocokan (misal: Regresi Linear pada data teks), berikan PERINGATAN KERAS di awal output.
+                ? 'REKOMENDASI ALAT: Pilih software yang PALING EFISIEN. Jika butuh koding (R/Python), sebutkan nama library spesifiknya.'
+                : `KOMPATIBILITAS ALAT (STRICT): Pastikan fitur yang disarankan BENAR-BENAR ADA di ${finalTool} versi standar. JANGAN berhalusinasi tentang fitur yang tidak ada.`}
+   - Jika ada ketidakcocokan fatal, berikan PERINGATAN KERAS.
 
 1. Judul Penelitian: Buatkan judul yang akademis, spesifik, dan menarik (maksimal 20 kata). Hindari judul klise.
 
@@ -262,8 +269,6 @@ Buatkan outline proposal penelitian (Bab 1-3) yang mencakup:
    - Rumusan Masalah: Turunkan 3-4 pertanyaan penelitian spesifik dari gap tersebut.
 
 3. Detail Metodologi (Sangat Penting):
-   - ${isAiMethod ? 'Tentukan desain spesifik dan jelaskan alasannya.' : `Jelaskan alasan pemilihan desain ${subMethod} untuk topik ini.`}
-   - TABEL DEFINISI OPERASIONAL: Buat tabel yang memetakan [Nama Variabel] -> [Kolom di Dataset] -> [Skala Data (Nominal/Ordinal/Rasio)] -> [Indikator/Teori Referensi].
    - ${isAiMethod ? 'Tentukan desain spesifik dan jelaskan alasannya.' : `Jelaskan alasan pemilihan desain ${subMethod} untuk topik ini.`}
    - TABEL DEFINISI OPERASIONAL: Buat tabel yang memetakan [Nama Variabel] -> [Kolom di Dataset] -> [Skala Data (Nominal/Ordinal/Rasio)] -> [Indikator/Teori Referensi].
    - ${finalTool === 'Saran AI'
@@ -279,7 +284,8 @@ ${methodTasks}
 
 CATATAN: Berikan output dalam kanvas yang rapi. Gunakan teks bold untuk poin kunci dan bullet lists untuk detail.`;
     } else {
-        return `Act as an Academic Research Expert in ${finalField} specializing in ${fullMethodLabel}.
+        return `Act as a "Strict Methodologist Reviewer" in ${finalField}.
+        Be critical, precise, and avoid fluff. Focus on methodological accuracy.
 
 I am writing a FULL RESEARCH PROPOSAL with the following details:
 
@@ -300,15 +306,21 @@ ${detailsFormatted}
 
 ${styleGuide}
 
+THINKING PROCESS INSTRUCTION (Chain-of-Thought):
+Before writing the final output, you MUST perform a deep thinking process inside a \`[THOUGHT_PROCESS]\` block:
+1. Analyze if the Research Gap is logical and strong. If weak, CRITICIZE IT.
+2. Check if Variables matches the Method ${fullMethodLabel}.
+3. Verify if ${finalTool} is capable of running the analysis.
+
 YOUR TASK:
 Create a comprehensive research proposal outline (Chapters 1-3) including:
 
-0. DATA FEASIBILITY CHECK (CRITICAL):
-   - Review the "Table Structure Snippet" above. Are the data types (Numeric/Categorical) suitable for analysis?
+0. DATA & TOOL FEASIBILITY CHECK (CRITICAL):
+   - Review "Table Structure Snippet". Are data types suitable?
    - ${finalTool === 'Saran AI'
-                ? 'TOOL RECOMMENDATION (MANDATORY): Based on the data structure and High Novelty requirement, RECOMMEND the most advanced/suitable software (e.g. Python/R/SmartPLS).'
-                : `TOOL COMPATIBILITY (MANDATORY): Ensure all suggested algorithms/statistical tests CAN BE EXECUTED in ${finalTool}. Do not suggest features unavailable in this software.`}
-   - If there is a mismatch (e.g., Linear Regression on text data), provide a STRONG WARNING at the beginning.
+                ? 'TOOL RECOMMENDATION: Select the most EFFICIENT software. If code is needed (R/Python), SPECIFY LIBRARIES.'
+                : `TOOL COMPATIBILITY (STRICT): Ensure suggested features REALLY EXIST in ${finalTool} standard version. DO NOT hallucinate nonexistent plugins.`}
+   - If there is a mismatch, provide a STRONG WARNING. I prefer harsh truth over false hope.
 
 1. Research Title: Create an academic, specific, and engaging title (maximum 20 words). Avoid cliches.
 
@@ -317,8 +329,6 @@ Create a comprehensive research proposal outline (Chapters 1-3) including:
    - Problem Statement: Derive 3-4 specific research questions from that gap.
 
 3. Methodological Details (Crucial):
-   - ${isAiMethod ? 'Determine the specific design and justify the choice.' : `Justify the choice of ${subMethod} design for this topic.`}
-   - OPERATIONAL DEFINITION TABLE: Create a table mapping [Variable Name] -> [Dataset Column] -> [Data Scale (Nominal/Ordinal/Ratio)] -> [Indicator/Theoretical Reference].
    - ${isAiMethod ? 'Determine the specific design and justify the choice.' : `Justify the choice of ${subMethod} design for this topic.`}
    - OPERATIONAL DEFINITION TABLE: Create a table mapping [Variable Name] -> [Dataset Column] -> [Data Scale (Nominal/Ordinal/Ratio)] -> [Indicator/Theoretical Reference].
    - ${finalTool === 'Saran AI'
