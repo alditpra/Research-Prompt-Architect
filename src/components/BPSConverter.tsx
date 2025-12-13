@@ -261,7 +261,7 @@ export default function BPSConverter() {
                             <FileSpreadsheet className="w-8 h-8 text-indigo-600" />
                             <h1 className="font-bold text-2xl text-gray-900">BPS Data Converter</h1>
                         </div>
-                        <p className="text-gray-600">Konversi file BPS menjadi format rapi (single header)</p>
+                        <p className="text-gray-600">Konversi file BPS menjadi format rapi (single header)versi beta, belum fix bener</p>
                     </div>
                     <Link
                         href="/"
@@ -403,8 +403,8 @@ export default function BPSConverter() {
                                     <button
                                         onClick={() => setPreviewMode('table')}
                                         className={`px-3 py-1 rounded-md text-xs font-medium transition-all ${previewMode === 'table'
-                                                ? 'bg-white text-indigo-600 shadow-sm'
-                                                : 'text-gray-500 hover:text-gray-900'
+                                            ? 'bg-white text-indigo-600 shadow-sm'
+                                            : 'text-gray-500 hover:text-gray-900'
                                             }`}
                                     >
                                         Table View
@@ -412,8 +412,8 @@ export default function BPSConverter() {
                                     <button
                                         onClick={() => setPreviewMode('raw')}
                                         className={`px-3 py-1 rounded-md text-xs font-medium transition-all ${previewMode === 'raw'
-                                                ? 'bg-white text-indigo-600 shadow-sm'
-                                                : 'text-gray-500 hover:text-gray-900'
+                                            ? 'bg-white text-indigo-600 shadow-sm'
+                                            : 'text-gray-500 hover:text-gray-900'
                                             }`}
                                     >
                                         Headers Only
