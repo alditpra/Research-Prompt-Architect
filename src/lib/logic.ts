@@ -93,7 +93,23 @@ ${colInfo}
             }).join('\n\n');
         }).join('\n\n' + '='.repeat(20) + '\n');
 
-        datasetContext = `\n${title}\n${content}\n${language === 'id' ? '(PENTING: Gunakan "Table Structure Snippet" untuk memahami header yang kompleks, misal data BPS/Time Series. Identifikasi variabel yang sebenarnya dari struktur tersebut)' : '(IMPORTANT: Use "Table Structure Snippet" to understand complex headers, e.g. Time Series/BPS data. Identify true variables from this structure)'}\n`;
+        const datasetLimitNote = language === 'id'
+            ? `
+
+BATASAN DATASET:
+- GUNAKAN HANYA dataset yang diupload di atas sebagai sumber data UTAMA untuk analisis.
+- JANGAN berasumsi ada data lain yang tidak disebutkan.
+- Jika dataset di atas TIDAK CUKUP untuk menjawab rumusan masalah, SARANKAN dataset tambahan yang perlu dikumpulkan (misal: data sekunder dari BPS, survei tambahan, dll).
+- Jelaskan APA yang kurang dan MENGAPA dataset tambahan diperlukan.`
+            : `
+
+DATASET LIMITATION:
+- USE ONLY the uploaded dataset above as the PRIMARY data source for analysis.
+- DO NOT assume other data exists that is not mentioned.
+- If the dataset above is INSUFFICIENT to answer the research questions, SUGGEST additional datasets that need to be collected (e.g., secondary data from statistics bureau, additional surveys, etc).
+- Explain WHAT is missing and WHY additional data is required.`;
+
+        datasetContext = `\n${title}\n${content}\n${language === 'id' ? '(PENTING: Gunakan "Table Structure Snippet" untuk memahami header yang kompleks, misal data BPS/Time Series. Identifikasi variabel yang sebenarnya dari struktur tersebut)' : '(IMPORTANT: Use "Table Structure Snippet" to understand complex headers, e.g. Time Series/BPS data. Identify true variables from this structure)'}${datasetLimitNote}\n`;
     }
     // Get style guide
     const styleGuide = STYLE_GUIDE[language];
