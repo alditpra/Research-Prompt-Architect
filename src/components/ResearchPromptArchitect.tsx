@@ -911,8 +911,8 @@ export default function ResearchPromptArchitect() {
                             </h3>
                             <p className="text-gray-600 text-sm leading-relaxed">
                                 {state.language === 'id'
-                                    ? 'Stuck dengan data yang rumit? Saya akan kerjakan bagian Analisis Data, Coding, Visualisasi, & Interpretasi (Metode & Hasil) secara GRATIS. Timbal balik: Jadikan saya Penulis Kedua (2nd Author). Anda urus teori, penulisan naskah, submit & biaya.'
-                                    : 'Stuck with complex data? I will handle Data Analysis, Coding, Visualization, & Interpretation (Method & Result Chapters) for FREE. In exchange: 2nd Authorship. You handle Theory, Writing, Submission & Fees.'}
+                                    ? 'Stuck dengan data yang rumit? Saya akan kerjakan bagian Analisis Data, Coding, Visualisasi, & Interpretasi (Metode & Hasil) secara GRATIS. Timbal balik: Jadikan saya Penulis Kedua (2nd Author). Anda urus teori, penulisan naskah, submit & biaya. Tapi tergantung lebelnya juga sih.'
+                                    : 'Stuck with complex data? I will handle Data Analysis, Coding, Visualization, & Interpretation (Method & Result Chapters) for FREE. In exchange: 2nd Authorship. You handle Theory, Writing, Submission & Fees. Depends on the level of the paper.'}
                             </p>
 
                             <div className="flex flex-wrap items-center justify-center md:justify-start gap-3 pt-2">
