@@ -28,6 +28,7 @@ export interface AppState {
     subMethod: string; // New: Case Study, Correlational, etc.
     tool: string; // New: SPSS, NVivo, etc.
     customTool: string; // Only used when tool === 'Lainnya'
+    noveltyMode: 'traditional' | 'advanced'; // New: Determines the "risk/reward" of the method
     details: {
         qualitative: { informant: string; focus: string };
         quantitative: { varX: string; varY: string; varZ: string; population: string };

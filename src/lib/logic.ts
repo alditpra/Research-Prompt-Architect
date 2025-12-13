@@ -57,7 +57,7 @@ export function formatDetailsForPrompt(method: string, details: AppState['detail
 }
 
 export function generatePrompt(state: AppState): string {
-    const { language, field, customField, topic, problem, outputMode, uploadedFiles, method, subMethod, tool, customTool, details } = state;
+    const { language, field, customField, topic, problem, outputMode, uploadedFiles, method, subMethod, tool, customTool, noveltyMode, details } = state;
 
     // Determine final field
     const finalField = field === 'Lainnya' ? sanitizeInput(customField) : field;
@@ -122,6 +122,30 @@ ${colInfo}
         }
     }
 
+    // Novelty/Approach Instructions
+    let noveltyInstructions = '';
+    if (noveltyMode === 'advanced') {
+        noveltyInstructions = language === 'id'
+            ? `INSTRUKSI NOVELTY (MUTAKHIR/ADVANCED): 
+- Prioritaskan pendekatan state-of-the-art atau algoritma terbaru.
+- Jangan gunakan pendekatan standar yang terlalu umum jika ada alternatif yang lebih tajam.
+- Tekankan aspek kebaruan/gap yang unik.`
+            : `NOVELTY INSTRUCTIONS (ADVANCED):
+- Prioritize state-of-the-art approaches or recent algorithms.
+- Avoid standard/generic approaches if sharper alternatives exist.
+- Emphasize unique novelty/gap.`;
+    } else {
+        noveltyInstructions = language === 'id'
+            ? `INSTRUKSI NOVELTY (STANDAR/TRADISIONAL): 
+- Gunakan pendekatan yang sudah mapan dan teruji (High Reliability).
+- Hindari metode eksperimental yang berisiko tinggi.
+- Fokus pada ketelitian replikasi standar akademik yang baku.`
+            : `NOVELTY INSTRUCTIONS (STANDARD/TRADITIONAL):
+- Use established, time-tested approaches (High Reliability).
+- Avoid high-risk experimental methods.
+- Focus on rigorous adherence to standard academic verification.`;
+    }
+
     // Format Problem / Gap
     let problemSection = '';
     const hasProblem = problem.ideal.trim() || problem.actual.trim();
@@ -154,6 +178,7 @@ Tujuan: Membantu saya menemukan ide penelitian yang segar dan valid (Brainstormi
 KONTEKS SEMENTARA:
 - Topik Minat: ${finalTopic}
 - Metode Bayangan: ${fullMethodLabel}
+- ${noveltyInstructions}
 - ${problemSection}
 ${datasetContext}
 
@@ -177,6 +202,7 @@ Goal: Help me find fresh and valid research ideas (Brainstorming).
 TENTATIVE CONTEXT:
 - Interest Topic: ${finalTopic}
 - Tentative Method: ${fullMethodLabel}
+- ${noveltyInstructions}
 - ${problemSection}
 ${datasetContext}
 
@@ -207,6 +233,9 @@ KONTEKS PENELITIAN:
 - Metode Utama: ${baseMethodLabel}
 - Desain Spesifik: ${subMethod || '-'}
 - Alat Analisis: ${finalTool || '-'}
+- Mode Pendekatan: ${noveltyMode === 'advanced' ? 'Mutakhir/High Novelty' : 'Standar/Aman'}
+
+${noveltyInstructions}
 
 ${problemSection}
 ${datasetContext}
@@ -253,6 +282,9 @@ RESEARCH CONTEXT:
 - Main Method: ${baseMethodLabel}
 - Specific Design: ${subMethod || '-'}
 - Analysis Tool: ${finalTool || '-'}
+- Approach Mode: ${noveltyMode === 'advanced' ? 'Advanced/High Novelty' : 'Traditional/Safe'}
+
+${noveltyInstructions}
 
 ${problemSection}
 ${datasetContext}

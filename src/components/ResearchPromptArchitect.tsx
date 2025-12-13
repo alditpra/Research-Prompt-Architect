@@ -20,6 +20,7 @@ const INITIAL_STATE: AppState = {
     subMethod: '',
     tool: '',
     customTool: '',
+    noveltyMode: 'traditional',
     details: {
         qualitative: { informant: '', focus: '' },
         quantitative: { varX: '', varY: '', varZ: '', population: '' },
@@ -581,6 +582,54 @@ export default function ResearchPromptArchitect() {
                                 />
                             </div>
                         )}
+                    </div>
+
+                    {/* Novelty Mode Selection */}
+                    <div className="space-y-3 pt-2">
+                        <label className="block text-sm font-medium text-gray-700">
+                            {state.language === 'id' ? 'Tingkat Kebaruan (Novelty)' : 'Novelty Level'} <span className="text-red-500">*</span>
+                        </label>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <button
+                                onClick={() => updateState('noveltyMode', 'traditional')}
+                                className={`text-left p-4 rounded-xl border transition-all duration-200 ${state.noveltyMode === 'traditional'
+                                    ? 'bg-blue-50 border-blue-200 ring-1 ring-blue-300 shadow-sm'
+                                    : 'bg-white border-gray-200 hover:border-gray-300 hover:bg-gray-50'
+                                    }`}
+                            >
+                                <div className="flex items-center gap-2 mb-1">
+                                    <span className="text-xl">🛡️</span>
+                                    <h4 className={`font-semibold text-sm ${state.noveltyMode === 'traditional' ? 'text-blue-800' : 'text-gray-800'}`}>
+                                        {state.language === 'id' ? 'Metode Standar' : 'Traditional Method'}
+                                    </h4>
+                                </div>
+                                <p className="text-xs text-gray-500 leading-relaxed">
+                                    {state.language === 'id'
+                                        ? 'Prioritas metode mapan & teruji. (Reliabilitas Tinggi)'
+                                        : 'Prioritizes established methods. (High Reliability)'}
+                                </p>
+                            </button>
+
+                            <button
+                                onClick={() => updateState('noveltyMode', 'advanced')}
+                                className={`text-left p-4 rounded-xl border transition-all duration-200 ${state.noveltyMode === 'advanced'
+                                    ? 'bg-purple-50 border-purple-200 ring-1 ring-purple-300 shadow-sm'
+                                    : 'bg-white border-gray-200 hover:border-gray-300 hover:bg-gray-50'
+                                    }`}
+                            >
+                                <div className="flex items-center gap-2 mb-1">
+                                    <span className="text-xl">🚀</span>
+                                    <h4 className={`font-semibold text-sm ${state.noveltyMode === 'advanced' ? 'text-purple-800' : 'text-gray-800'}`}>
+                                        {state.language === 'id' ? 'Metode Mutakhir' : 'Advanced Method'}
+                                    </h4>
+                                </div>
+                                <p className="text-xs text-gray-500 leading-relaxed">
+                                    {state.language === 'id'
+                                        ? 'Prioritas algoritma state-of-the-art. (Novelty Tinggi)'
+                                        : 'Prioritizes state-of-the-art algorithms. (High Novelty)'}
+                                </p>
+                            </button>
+                        </div>
                     </div>
 
                     {/* Data Details OR Auto-Detection Banner */}
