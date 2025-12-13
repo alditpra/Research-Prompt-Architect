@@ -138,12 +138,12 @@ ${colInfo}
         noveltyInstructions = language === 'id'
             ? `INSTRUKSI NOVELTY (STANDAR/TRADISIONAL): 
 - Gunakan pendekatan yang sudah mapan dan teruji (High Reliability).
-- Hindari metode eksperimental yang berisiko tinggi.
-- Fokus pada ketelitian replikasi standar akademik yang baku.`
+- Hindari metode yang memerlukan pemrograman.
+- fokus pada penggunaan software statistik gui seperti spss, amos, smartpls, eviews, dsb.`
             : `NOVELTY INSTRUCTIONS (STANDARD/TRADITIONAL):
 - Use established, time-tested approaches (High Reliability).
-- Avoid high-risk experimental methods.
-- Focus on rigorous adherence to standard academic verification.`;
+- Avoid methods that require programming.
+- Focus on the use of GUI-based statistical software such as SPSS, AMOS, SmartPLS, EViews, and similar tools.`;
     }
 
     // Format Problem / Gap
