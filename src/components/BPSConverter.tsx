@@ -261,7 +261,7 @@ export default function BPSConverter() {
                             <FileSpreadsheet className="w-8 h-8 text-indigo-600" />
                             <h1 className="font-bold text-2xl text-gray-900">BPS Data Converter</h1>
                         </div>
-                        <p className="text-gray-600">Konversi file BPS menjadi format rapi (single header)versi beta, belum fix bener</p>
+                        <p className="text-gray-600">Konversi file BPS menjadi format rapi (single header) versi beta, belum fix bener</p>
                     </div>
                     <Link
                         href="/"
