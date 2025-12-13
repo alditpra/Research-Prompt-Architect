@@ -28,7 +28,7 @@ const INITIAL_STATE: AppState = {
     }
 };
 
-const FIELDS: FieldType[] = ['Ekonomi', 'Bisnis Digital', 'Teknik Informatika', 'Pendidikan', 'Kesehatan', 'Sastra', 'Manajemen', 'Sistem Informasi', 'Lainnya'];
+const FIELDS: FieldType[] = ['Ekonomi', 'Bisnis Digital', 'Manajemen', 'Akuntansi', 'Teknik Informatika', 'Sistem Informasi', 'Pendidikan', 'Kesehatan', 'Sastra', 'Hukum', 'Lainnya'];
 
 export default function ResearchPromptArchitect() {
     const [state, setState] = useState<AppState>(INITIAL_STATE);

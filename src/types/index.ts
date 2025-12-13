@@ -18,7 +18,7 @@ export interface UploadedFile {
 
 export interface AppState {
     language: 'id' | 'en'; // Default: 'id'
-    field: 'Ekonomi' | 'Hukum' | 'Teknik Informatika' | 'Pendidikan' | 'Kesehatan' | 'Sastra' | 'Bisnis Digital' | 'Manajemen' | 'Sistem Informasi' | 'Lainnya' | '';
+    field: 'Ekonomi' | 'Hukum' | 'Teknik Informatika' | 'Pendidikan' | 'Kesehatan' | 'Sastra' | 'Bisnis Digital' | 'Manajemen' | 'Sistem Informasi' | 'Akuntansi' | 'Lainnya' | '';
     customField: string; // Only used when field === 'Lainnya'
     topic: string;
     problem: { ideal: string; actual: string }; // Changed to structured object
