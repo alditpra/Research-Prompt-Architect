@@ -1,7 +1,8 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Copy, CheckCircle, GraduationCap, Languages, FileText, Users, BookOpen } from 'lucide-react';
+import Link from 'next/link';
+import { Copy, CheckCircle, GraduationCap, Languages, FileText, Users, BookOpen, FileSpreadsheet } from 'lucide-react';
 import { AppState, FieldType, MethodType } from '@/types';
 import { generatePrompt } from '@/lib/logic';
 import { METHOD_LABELS, SUB_METHODS, ANALYSIS_TOOLS } from '@/lib/constants';
@@ -340,14 +341,23 @@ export default function ResearchPromptArchitect() {
                         </div>
                         <p className="text-gray-600">{t.subtitle}</p>
                     </div>
-                    <button
-                        onClick={() => updateState('language', state.language === 'id' ? 'en' : 'id')}
-                        className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gray-100 hover:bg-gray-200 text-sm font-medium transition-colors"
-                        aria-label="Toggle Language"
-                    >
-                        <Languages className="w-4 h-4" />
-                        {state.language === 'id' ? '🇮🇩 IND' : '🇬🇧 ENG'}
-                    </button>
+                    <div className="flex items-center gap-2">
+                        <Link
+                            href="/converter"
+                            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-indigo-50 hover:bg-indigo-100 text-sm font-medium transition-colors text-indigo-600"
+                        >
+                            <FileSpreadsheet className="w-4 h-4" />
+                            BPS Converter
+                        </Link>
+                        <button
+                            onClick={() => updateState('language', state.language === 'id' ? 'en' : 'id')}
+                            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gray-100 hover:bg-gray-200 text-sm font-medium transition-colors"
+                            aria-label="Toggle Language"
+                        >
+                            <Languages className="w-4 h-4" />
+                            {state.language === 'id' ? '🇮🇩 IND' : '🇬🇧 ENG'}
+                        </button>
+                    </div>
                 </header>
 
                 {/* Output Mode Selection (Moved to Top) */}
