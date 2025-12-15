@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
-import { Copy, CheckCircle, GraduationCap, Languages, FileText, Users, BookOpen, FileSpreadsheet } from 'lucide-react';
+import { Copy, CheckCircle, GraduationCap, Languages, FileText, Users, BookOpen, FileSpreadsheet, ArrowUpRight } from 'lucide-react';
 import { AppState, FieldType, MethodType } from '@/types';
 import { generatePrompt } from '@/lib/logic';
 import { METHOD_LABELS, SUB_METHODS, ANALYSIS_TOOLS } from '@/lib/constants';
@@ -149,7 +149,20 @@ export default function ResearchPromptArchitect() {
     const texts = {
         id: {
             title: 'Research Prompt Architect',
-            subtitle: 'Perancang instruksi riset akademis berbasis logika by alditpra',
+            subtitle: (
+                <>
+                    Perancang instruksi riset akademis berbasis logika by{' '}
+                    <a
+                        href="https://aldit.pages.dev"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-indigo-600 hover:text-indigo-800 inline-flex items-center hover:underline"
+                    >
+                        alditpra
+                        <ArrowUpRight className="w-3 h-3 ml-0.5" />
+                    </a>
+                </>
+            ),
             fieldLabel: 'Bidang Studi',
             customFieldLabel: 'Spesifikasikan Bidang Studi',
             customFieldPlaceholder: 'Contoh: Antropologi, Fisika Teoretis...',
@@ -200,7 +213,20 @@ export default function ResearchPromptArchitect() {
         },
         en: {
             title: 'Research Prompt Architect',
-            subtitle: 'Logic-based academic research prompt builder by alditpra',
+            subtitle: (
+                <>
+                    Logic-based academic research prompt builder by{' '}
+                    <a
+                        href="https://aldit.pages.dev"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-indigo-600 hover:text-indigo-800 inline-flex items-center hover:underline"
+                    >
+                        alditpra
+                        <ArrowUpRight className="w-3 h-3 ml-0.5" />
+                    </a>
+                </>
+            ),
             fieldLabel: 'Field of Study',
             customFieldLabel: 'Specify Field of Study',
             customFieldPlaceholder: 'Example: Anthropology, Theoretical Physics...',
